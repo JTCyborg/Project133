@@ -537,7 +537,7 @@ static int windows_setup() {
         wincl.lpfnWndProc = subWindowProcedure;
         wincl.style = CS_OWNDC;
         wincl.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-        if (!RegisterClassEx(&wincl))
+        if (!RegisterClassExA(&wincl))
                 return 0;
 
         msg_hwnd = CreateWindowExA(0, szMsgClassName, "", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, hinstance, NULL);
