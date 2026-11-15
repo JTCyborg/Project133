@@ -34,6 +34,11 @@ set(PCEM_SRC_PLUGINAPI
 if(PLUGIN_ENGINE)
         add_library(pcem-plugin-api SHARED ${PCEM_SRC_PLUGINAPI} ${PCEM_PUBLIC_API})
         if(MSVC)
+                # The target name contains hyphens, so define the valid C
+                # identifier expected by pcem/api.h explicitly.
+                target_compile_definitions(pcem-plugin-api PRIVATE pcem_plugin_api_EXPORTS)
+        endif()
+        if(MSVC)
                 # Keep the import library in the same directory used by the
                 # Visual Studio-generated pcem link command (build/src).
                 set_target_properties(pcem-plugin-api PROPERTIES
