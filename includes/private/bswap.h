@@ -55,4 +55,6 @@ static inline void bswap64s(uint64_t *s) { *s = bswap64(*s); }
         static inline type endian##size##_to_cpup(const type *p) { return endian##size##_to_cpu(*p); }                           \
         static inline void cpu_to_##endian##size##p(type *p) { *p = cpu_to_##endian##size(*p); }
 
+CPU_CONVERT(le, 16, uint16_t);
+
 #endif /* BSWAP_H */
