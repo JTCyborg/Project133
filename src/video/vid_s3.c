@@ -1601,9 +1601,9 @@ uint8_t s3_accel_in(uint16_t port, void *p) {
                 case 0x7:
                         return s3->accel.cmd >> 8;
                 case 0x8:
-                        return (s3->accel.subsys_cntl >> 8) & ~0xe000;
+                        return 0; /* 8-bit register: high byte is zero. */
                 case 0x9:
-                        return (s3->accel.setup_md >> 8) & ~0xf000;
+                        return 0; /* 8-bit register: high byte is zero. */
                 case 0xa:
                         return s3->accel.multifunc[0xd] >> 8;
                 }
