@@ -20,6 +20,9 @@
 #include "resid-fp/sid.h"
 #include <stdio.h>
 #include <math.h>
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
 
 extern float convolve(const float *a, const float *b, int n);
 extern float convolve_sse(const float *a, const float *b, int n);
@@ -27,7 +30,7 @@ extern float convolve_sse(const float *a, const float *b, int n);
 enum host_cpu_feature { HOST_CPU_MMX = 1, HOST_CPU_SSE = 2, HOST_CPU_SSE2 = 4, HOST_CPU_SSE3 = 8 };
 
 /* This code is appropriate for 32-bit and 64-bit x86 CPUs. */
-#if defined(__x86_64__) || defined(__i386__) || defined(_MSC_VER)
+#if defined(__x86_64__) || defined(__i386__) || defined(_M_X64) || defined(_M_IX86)
 
 struct cpu_x86_regs_s {
         unsigned int eax;
@@ -40,16 +43,14 @@ typedef struct cpu_x86_regs_s cpu_x86_regs_t;
 static cpu_x86_regs_t get_cpuid_regs(unsigned int index) {
         cpu_x86_regs_t retval;
 
-#if defined(_MSC_VER) /* MSVC assembly */
-        __asm {
-	  mov eax, [index]
-	  cpuid
-	  mov [retval.eax], eax
-	  mov [retval.ebx], ebx
-	  mov [retval.ecx], ecx
-	  mov [retval.edx], edx
-        }
-#else /* GNU assembly */
+#if defined(_MSC_VER)
+        int regs[4];
+        __cpuid(regs, (int)index);
+        retval.eax = (unsigned int)regs[0];
+        retval.ebx = (unsigned int)regs[1];
+        retval.ecx = (unsigned int)regs[2];
+        retval.edx = (unsigned int)regs[3];
+#else
         asm("movl %1, %%eax; cpuid; movl %%eax, %0;" : "=m"(retval.eax) : "r"(index) : "eax", "ebx", "ecx", "edx");
         asm("movl %1, %%eax; cpuid; movl %%ebx, %0;" : "=m"(retval.ebx) : "r"(index) : "eax", "ebx", "ecx", "edx");
         asm("movl %1, %%eax; cpuid; movl %%ecx, %0;" : "=m"(retval.ecx) : "r"(index) : "eax", "ebx", "ecx", "edx");
@@ -78,8 +79,9 @@ static int host_cpu_features_by_cpuid(void) {
 static int host_cpu_features(void) {
         static int features = 0;
         static int features_detected = 0;
-/* 32-bit only */
-#if defined(__i386__) || (defined(_MSC_VER) && defined(_WIN32))
+/* The CPUID instruction is guaranteed on x86-64. GCC 32-bit retains
+ * the EFLAGS.ID availability test for older 32-bit processors. */
+#if defined(__i386__) && !defined(_MSC_VER)
         unsigned long temp1, temp2;
 #endif
 
@@ -87,30 +89,12 @@ static int host_cpu_features(void) {
                 return features;
         features_detected = 1;
 
-#if defined(_MSC_VER) && defined(_WIN32) /* MSVC compatible assembly appropriate for 32-bit Windows */
-        /* see if we are dealing with a cpu that has the cpuid instruction */
-        __asm {
-	  pushf
-	  pop eax
-	  mov [temp1], eax
-	  xor eax, 0x200000
-	  push eax
-	  popf
-	  pushf
-	  pop eax
-	  mov [temp2], eax
-	  push [temp1]
-	  popf
-        }
-#endif
-#if defined(__i386__) /* GNU assembly */
+#if defined(__i386__) && !defined(_MSC_VER) /* GNU 32-bit CPUID availability test */
         asm("pushfl; popl %%eax; movl %%eax, %0; xorl $0x200000, %%eax; pushl %%eax; popfl; pushfl; popl %%eax; movl %%eax, %1; "
             "pushl %0; popfl "
             : "=r"(temp1), "=r"(temp2)
             :
             : "eax");
-#endif
-#if defined(__i386__) || (defined(_MSC_VER) && defined(_WIN32))
         temp1 &= 0x200000;
         temp2 &= 0x200000;
         if (temp1 == temp2) {
