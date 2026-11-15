@@ -15,13 +15,20 @@ include(${CMAKE_SOURCE_DIR}/cmake/arch-detect.cmake)
 
 target_architecture(PCEM_CPU_TYPE)
 
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -fomit-frame-pointer -fno-strict-aliasing -flto")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -fomit-frame-pointer -fno-strict-aliasing -flto")
+if(MSVC)
+    # MSVC-compatible Release flags. Keep LTCG disabled until the first
+    # native Windows build is clean.
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /Oy-")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /Oy-")
+else()
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -fomit-frame-pointer -fno-strict-aliasing -flto")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -fomit-frame-pointer -fno-strict-aliasing -flto")
+endif()
 
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELEASE} -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELEASE} -DDEBUG")
 
-if(${PCEM_CPU_TYPE} STREQUAL "x86_64")
+if(${PCEM_CPU_TYPE} STREQUAL "x86_64" AND NOT MSVC)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FILE_OFFSET_BITS=64")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FILE_OFFSET_BITS=64")
 endif()
@@ -45,10 +52,15 @@ message("PCem Display Engine: ${PCEM_DISPLAY_ENGINE}")
 message("***************************************************************")
 
 if(${PCEM_CPU_TYPE} STREQUAL "x86_64")
-    set(PCEM_MARCH "x86-64-v2" CACHE STRING "march CPU architecture")
-    message("MArch: ${PCEM_MARCH}")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${PCEM_MARCH}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=${PCEM_MARCH}")
+    if(MSVC)
+        set(PCEM_MARCH "MSVC x64 baseline")
+        message("MArch: ${PCEM_MARCH}")
+    else()
+        set(PCEM_MARCH "x86-64-v2" CACHE STRING "march CPU architecture")
+        message("MArch: ${PCEM_MARCH}")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${PCEM_MARCH}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=${PCEM_MARCH}")
+    endif()
 endif()
 
 option(PLUGIN_ENGINE "Build PCem with plugin support" ON)
