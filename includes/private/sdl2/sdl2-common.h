@@ -9,7 +9,13 @@
 #endif
 
 typedef enum { EMULATION_STOPPED, EMULATION_PAUSED, EMULATION_RUNNING } emulation_state_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern emulation_state_t emulation_state;
+#ifdef __cplusplus
+}
+#endif
 
 #define IS_PAUSED (emulation_state == EMULATION_PAUSED)
 
