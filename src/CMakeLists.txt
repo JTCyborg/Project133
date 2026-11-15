@@ -80,6 +80,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/plugin-api/plugin-api.cmake)
 
 set(PCEM_LIBRARIES ${PCEM_LIBRARIES} PARENT_SCOPE)
 add_executable(pcem ${PCEM_SRC} ${PCEM_PRIVATE_API} ${PCEM_EMBEDDED_PLUGIN_API})
+if(MSVC)
+        # wxWidgets viewer sources use C++20 designated aggregate initializers.
+        set_property(TARGET pcem PROPERTY CXX_STANDARD 20)
+        set_property(TARGET pcem PROPERTY CXX_STANDARD_REQUIRED ON)
+endif()
 target_compile_definitions(pcem PUBLIC ${PCEM_DEFINES})
 if(MSVC)
         # /Gy and /Gw are not enabled yet; first establish a clean MSVC build.
