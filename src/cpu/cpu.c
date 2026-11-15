@@ -1446,7 +1446,7 @@ void cpu_CPUID() {
                 case 0x80000001:
                         EAX = CPUID + 0x100;
                         EDX = CPUID_FPU | CPUID_VME | CPUID_PSE | CPUID_TSC | CPUID_MSR | CPUID_CMPXCHG8B | CPUID_MMX |
-                              CPUID_3DNOW;
+                              ((uint32_t)CPUID_3DNOW);
                         break;
 
                 case 0x80000002:          /*Processor name string*/
@@ -1494,7 +1494,7 @@ void cpu_CPUID() {
                 case 0x80000001:
                         EAX = CPUID + 0x100;
                         EDX = CPUID_FPU | CPUID_VME | CPUID_PSE | CPUID_TSC | CPUID_MSR | CPUID_CMPXCHG8B | CPUID_MMX |
-                              CPUID_3DNOW;
+                              ((uint32_t)CPUID_3DNOW);
                         break;
 
                 case 0x80000002:          /*Processor name string*/
@@ -1547,7 +1547,7 @@ void cpu_CPUID() {
                 case 0x80000001:
                         EAX = CPUID + 0x100;
                         EDX = CPUID_FPU | CPUID_VME | CPUID_PSE | CPUID_TSC | CPUID_MSR | CPUID_CMPXCHG8B | CPUID_MMX |
-                              CPUID_3DNOW;
+                              ((uint32_t)CPUID_3DNOW);
                         break;
 
                 case 0x80000002:          /*Processor name string*/
