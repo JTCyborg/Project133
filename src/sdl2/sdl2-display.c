@@ -1,6 +1,3 @@
-#ifdef _WIN32
-#define _WIN32_WINNT 0x0501
-#endif
 #include <SDL2/SDL.h>
 #include "video.h"
 #include "sdl2-video.h"
@@ -395,8 +392,8 @@ void get_registry_key_map() {
 
         bufSize = 32768;
         pclog("Preparing scan code map list...\n");
-        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, keyName, 0, 1, &hKey) == ERROR_SUCCESS) {
-                if (RegQueryValueEx(hKey, valueName, NULL, NULL, (LPBYTE)buf, &bufSize) == ERROR_SUCCESS) {
+        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, 1, &hKey) == ERROR_SUCCESS) {
+                if (RegQueryValueExA(hKey, valueName, NULL, NULL, (LPBYTE)buf, &bufSize) == ERROR_SUCCESS) {
                         UINT32 *bufEx2 = (UINT32 *)buf;
                         int scMapCount = bufEx2[2];
                         pclog("%lu scan code mappings found!\n", scMapCount);
@@ -484,7 +481,7 @@ LRESULT CALLBACK MsgWindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPAR
                 RECT r;
                 HWND parent = (HWND)native_canvas;
                 GetClientRect(parent, &r);
-                HWND child = CreateWindowEx(WS_EX_NOPARENTNOTIFY, szSubClassName, "", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0,
+                HWND child = CreateWindowExA(WS_EX_NOPARENTNOTIFY, szSubClassName, "", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0,
                                             0, r.right - r.left, r.bottom - r.top, parent, NULL, hinstance, NULL);
                 sub_hwnd = child;
                 return (LRESULT)child;
@@ -522,18 +519,18 @@ LRESULT CALLBACK subWindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPAR
 }
 
 static int windows_setup() {
-        WNDCLASSEX wincl;
+        WNDCLASSEXA wincl;
 
         if (msg_hwnd)
                 return 1;
 
         hinstance = (HINSTANCE)GetModuleHandle(NULL);
         memset(&wincl, 0, sizeof(wincl));
-        wincl.cbSize = sizeof(WNDCLASSEX);
+        wincl.cbSize = sizeof(WNDCLASSEXA);
         wincl.hInstance = hinstance;
         wincl.lpszClassName = szMsgClassName;
         wincl.lpfnWndProc = MsgWindowProcedure;
-        if (!RegisterClassEx(&wincl))
+        if (!RegisterClassExA(&wincl))
                 return 0;
 
         wincl.lpszClassName = szSubClassName;
@@ -543,7 +540,7 @@ static int windows_setup() {
         if (!RegisterClassEx(&wincl))
                 return 0;
 
-        msg_hwnd = CreateWindowEx(0, szMsgClassName, "", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, hinstance, NULL);
+        msg_hwnd = CreateWindowExA(0, szMsgClassName, "", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, hinstance, NULL);
         if (!msg_hwnd)
                 return 0;
 
