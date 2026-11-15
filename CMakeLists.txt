@@ -15,6 +15,12 @@ include(${CMAKE_SOURCE_DIR}/cmake/arch-detect.cmake)
 
 target_architecture(PCEM_CPU_TYPE)
 
+# Apply the MSVC compatibility header to all project targets, including
+# pcem-plugin-api, which is built as a separate DLL.
+if(MSVC)
+    add_compile_options("/FI${CMAKE_SOURCE_DIR}/includes/private/msvc-compat.h")
+endif()
+
 if(MSVC)
     # MSVC-compatible Release flags. Keep LTCG disabled until the first
     # native Windows build is clean.
