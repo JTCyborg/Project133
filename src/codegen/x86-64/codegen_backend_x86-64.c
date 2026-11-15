@@ -10,6 +10,10 @@
 #include "codegen_reg.h"
 #include "x86.h"
 
+#if defined(_MSC_VER)
+#include <xmmintrin.h>
+#endif
+
 #if defined(__linux__) || defined(__APPLE__)
 #include <sys/mman.h>
 #include <unistd.h>
@@ -312,7 +316,11 @@ void codegen_backend_init() {
 
         block_write_data = NULL;
 
+#if defined(_MSC_VER)
+        cpu_state.old_fp_control = _mm_getcsr();
+#else
         asm("stmxcsr %0\n" : "=m"(cpu_state.old_fp_control));
+#endif
         cpu_state.trunc_fp_control = cpu_state.old_fp_control | 0x6000;
 }
 
