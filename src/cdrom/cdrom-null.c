@@ -41,9 +41,9 @@ static int null_readtoc_session(unsigned char *b, int msf, int maxlen) { return 
 
 static int null_readtoc_raw(unsigned char *b, int maxlen) { return 0; }
 
-static uint32_t null_size() { return 0; }
+static uint32_t null_size(void) { return 0; }
 
-static int null_status() { return CD_STATUS_EMPTY; }
+static int null_status(void) { return CD_STATUS_EMPTY; }
 
 void cdrom_null_reset() {}
 
