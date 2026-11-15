@@ -27,7 +27,7 @@ static ALuint source[2]; // audio source
 
 int sound_buf_len_al = 48000 / 20;
 
-void closeal();
+void closeal(void);
 ALvoid alutInit(ALint *argc, ALbyte **argv) {
         ALCcontext *Context;
         ALCdevice *Device;
@@ -68,7 +68,7 @@ void initalmain(int argc, char *argv[]) {
 #endif
 }
 
-void closeal() {
+void closeal(void) {
 #ifdef USE_OPENAL
         alutExit();
 #endif
