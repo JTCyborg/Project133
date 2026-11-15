@@ -33,6 +33,17 @@ set(PCEM_SRC_PLUGINAPI
 
 if(PLUGIN_ENGINE)
         add_library(pcem-plugin-api SHARED ${PCEM_SRC_PLUGINAPI} ${PCEM_PUBLIC_API})
+        if(MSVC)
+                # Keep the import library in the same directory used by the
+                # Visual Studio-generated pcem link command (build/src).
+                set_target_properties(pcem-plugin-api PROPERTIES
+                        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+                        ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}"
+                        ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}"
+                        ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}"
+                        ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_CURRENT_BINARY_DIR}"
+                )
+        endif()
         target_link_libraries(pcem-plugin-api PRIVATE ${SDL2_LIBRARIES})
         target_compile_definitions(pcem-plugin-api PUBLIC ${PCEM_DEFINES})
         install(TARGETS pcem-plugin-api RUNTIME DESTINATION ${PCEM_BIN_DIR} LIBRARY DESTINATION ${PCEM_LIB_DIR} ARCHIVE DESTINATION ${PCEM_LIB_DIR})
