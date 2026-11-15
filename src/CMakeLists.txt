@@ -81,9 +81,16 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/plugin-api/plugin-api.cmake)
 set(PCEM_LIBRARIES ${PCEM_LIBRARIES} PARENT_SCOPE)
 add_executable(pcem ${PCEM_SRC} ${PCEM_PRIVATE_API} ${PCEM_EMBEDDED_PLUGIN_API})
 target_compile_definitions(pcem PUBLIC ${PCEM_DEFINES})
-target_compile_options(pcem PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-fno-common> $<$<COMPILE_LANGUAGE:C>:-fno-common>)
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-        target_link_options(pcem PRIVATE "-Wl,--subsystem,windows")
+if(MSVC)
+        # /Gy and /Gw are not enabled yet; first establish a clean MSVC build.
+        target_link_options(pcem PRIVATE "/SUBSYSTEM:WINDOWS")
+else()
+        target_compile_options(pcem PUBLIC
+                $<$<COMPILE_LANGUAGE:CXX>:-fno-common>
+                $<$<COMPILE_LANGUAGE:C>:-fno-common>)
+        if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+                target_link_options(pcem PRIVATE "-Wl,--subsystem,windows")
+        endif()
 endif()
 target_link_libraries(pcem PRIVATE ${PCEM_LIBRARIES})
 
