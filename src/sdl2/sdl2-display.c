@@ -337,7 +337,7 @@ static void input_capture(int on) {
         plat_input_capture(on);
 }
 
-void releasemouse() { input_capture(0); }
+void releasemouse(void) { input_capture(0); }
 
 #ifdef __APPLE__
 #define RELEASE_KEY_NAME "CTRL-CMD"
