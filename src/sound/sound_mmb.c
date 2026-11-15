@@ -101,11 +101,11 @@ void mmb_write(uint16_t addr, uint8_t data, void *p) {
                                         break;
                                 case 11:
                                         ay->regs[11] = data;
-                                        ayumi_set_envelope(&ay->chip, (ay->regs[12] >> 8) | ay->regs[11]);
+                                        ayumi_set_envelope(&ay->chip, ((uint16_t)ay->regs[12] << 8) | ay->regs[11]);
                                         break;
                                 case 12:
                                         ay->regs[12] = data;
-                                        ayumi_set_envelope(&ay->chip, (ay->regs[12] >> 8) | ay->regs[11]);
+                                        ayumi_set_envelope(&ay->chip, ((uint16_t)ay->regs[12] << 8) | ay->regs[11]);
                                         break;
                                 case 13:
                                         ay->regs[13] = data;
