@@ -98,6 +98,12 @@ else()
         endif()
 endif()
 target_link_libraries(pcem PRIVATE ${PCEM_LIBRARIES})
+if(PLUGIN_ENGINE)
+        # Link the plugin API by target so CMake builds its DLL/import library
+        # before linking the emulator.
+        target_link_libraries(pcem PRIVATE pcem-plugin-api)
+        add_dependencies(pcem pcem-plugin-api)
+endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         set_target_properties(pcem PROPERTIES
