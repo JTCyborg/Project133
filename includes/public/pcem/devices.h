@@ -4,6 +4,7 @@
 #include <pcem/api.h>
 
 #include <pcem/cpu.h>
+#include <pcem/defines.h>
 
 #define CONFIG_STRING 0
 #define CONFIG_INT 1
@@ -136,21 +137,6 @@ typedef struct mouse_t {
 
 #define AXIS_NOT_PRESENT -99999
 
-/*
- * Core device registries are owned by pcem-plugin-api.  Export their
- * declarations so the emulator imports the same registries used by plugins.
- */
-PCEM_API extern MODEL *models[ROM_MAX];
-PCEM_API extern VIDEO_CARD *video_cards[GFX_MAX];
-PCEM_API extern SOUND_CARD *sound_cards[SOUND_MAX];
-PCEM_API extern HDD_CONTROLLER *hdd_controllers[HDDCONTROLLERS_MAX];
-PCEM_API extern NETWORK_CARD *network_cards[NETWORK_CARD_MAX];
-PCEM_API extern LPT_DEVICE *lpt_devices[LPT_MAX];
-PCEM_API extern mouse_t *mouse_list[MOUSE_MAX];
-PCEM_API extern joystick_if_t *joystick_list[JOYSTICK_MAX];
-PCEM_API extern int model_count(void);
-PCEM_API extern void (*_sound_speed_changed)(void);
-
 typedef struct joystick_if_t {
         char name[80];
         void *(*init)();
@@ -165,6 +151,21 @@ typedef struct joystick_if_t {
         char button_names[32][32];
         char pov_names[4][32];
 } joystick_if_t;
+
+/*
+ * Core device registries are owned by pcem-plugin-api.  Export their
+ * declarations so the emulator imports the same registries used by plugins.
+ */
+PCEM_API extern MODEL *models[ROM_MAX];
+PCEM_API extern VIDEO_CARD *video_cards[GFX_MAX];
+PCEM_API extern SOUND_CARD *sound_cards[SOUND_MAX];
+PCEM_API extern HDD_CONTROLLER *hdd_controllers[HDDCONTROLLERS_MAX];
+PCEM_API extern NETWORK_CARD *network_cards[NETWORK_CARD_MAX];
+PCEM_API extern LPT_DEVICE *lpt_devices[LPT_MAX];
+PCEM_API extern mouse_t *mouse_list[MOUSE_MAX];
+PCEM_API extern joystick_if_t *joystick_list[JOYSTICK_MAX];
+PCEM_API extern int model_count(void);
+PCEM_API extern void (*_sound_speed_changed)(void);
 
 PCEM_API extern void pcem_add_model(MODEL *model);
 PCEM_API extern void pcem_add_video(VIDEO_CARD *video);
