@@ -12,13 +12,13 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #endif
-#if WIN64
+#if defined(WIN64) || defined(_WIN64)
 #define BITMAP windows_BITMAP
 #include <windows.h>
 #undef BITMAP
 #endif
 
-#include <xmmintrin.h>
+#include <emmintrin.h>
 
 #define BLOCK_NUM 8
 #define BLOCK_MASK (BLOCK_NUM - 1)
@@ -726,7 +726,7 @@ static inline void voodoo_generate(uint8_t *code_block, voodoo_t *voodoo, voodoo
         addbyte(0x6f);
         addbyte(0x07 | (3 << 3));
 
-#if WIN64
+#if defined(WIN64) || defined(_WIN64)
         addbyte(0x48); /*MOV RDI, RCX (voodoo_state)*/
         addbyte(0x89);
         addbyte(0xcf);
@@ -3262,8 +3262,8 @@ static inline void *voodoo_get_block(voodoo_t *voodoo, voodoo_params_t *params, 
 void voodoo_codegen_init(voodoo_t *voodoo) {
         int c;
 
-#if WIN64
-        voodoo->codegen_data = VirtualAlloc(NULL, sizeof(voodoo_x86_data_t) * BLOCK_NUM * 4, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+#if defined(WIN64) || defined(_WIN64)
+        voodoo->codegen_data = VirtualAlloc(NULL, sizeof(voodoo_x86_data_t) * BLOCK_NUM * 4, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 #else
 #if defined(__APPLE__) && defined(MAP_JIT)
         voodoo->codegen_data = mmap(0, sizeof(voodoo_x86_data_t) * BLOCK_NUM * 4, PROT_READ | PROT_WRITE | PROT_EXEC,
@@ -3298,7 +3298,7 @@ void voodoo_codegen_init(voodoo_t *voodoo) {
 }
 
 void voodoo_codegen_close(voodoo_t *voodoo) {
-#if WIN64
+#if defined(WIN64) || defined(_WIN64)
         VirtualFree(voodoo->codegen_data, 0, MEM_RELEASE);
 #else
         munmap(voodoo->codegen_data, sizeof(voodoo_x86_data_t) * BLOCK_NUM * 4);
