@@ -1,5 +1,18 @@
 #ifndef __HAVE_RAMDISK_H__
 #define __HAVE_RAMDISK_H__
+
+#include <stddef.h>
+#include <stdio.h>
+#include <stdint.h>
+
+#if defined(_MSC_VER)
+#ifndef _OFF_T_DEFINED
+typedef int64_t off_t;
+#define _OFF_T_DEFINED
+#endif
+#else
+#include <sys/types.h>
+#endif
 /*
  * Growable RAM disk memory stream for PCem by MMaster (2024)
  *
