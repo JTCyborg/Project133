@@ -3,11 +3,13 @@
 #include <windows.h>
 #include <io.h>
 #ifdef __MINGW64_VERSION_MAJOR
-#include "ntddcdrm.h"
-#include "ntddscsi.h"
+#include <ntddcdrm.h>
+#include <ntddscsi.h>
 #else
-#include "ddk/ntddcdrm.h"
-#include "ddk/ntddscsi.h"
+/* Windows SDK/WDK expose these headers from the shared include directory.
+ * The legacy ddk/ prefix is not a valid MSVC include path. */
+#include <ntddcdrm.h>
+#include <ntddscsi.h>
 #endif
 #include "ibm.h"
 #include "ide.h"
