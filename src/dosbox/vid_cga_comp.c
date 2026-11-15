@@ -166,7 +166,7 @@ Bit8u *Composite_Process(uint8_t cgamode, Bit8u border, Bit32u blocks /*, bool d
                 ++srgb;                                                                                                          \
         } while (0)
 
-#define OUT(v)                                                                                                                   \
+#define CGA_OUT(v)                                                                                                                   \
         do {                                                                                                                     \
                 *o = (v);                                                                                                        \
                 ++o;                                                                                                             \
@@ -177,7 +177,7 @@ Bit8u *Composite_Process(uint8_t cgamode, Bit8u border, Bit32u blocks /*, bool d
         Bit8u *rgbi = TempLine;
         int *b = &CGA_Composite_Table[border * 68];
         for (x = 0; x < 4; ++x)
-                OUT(b[(x + 3) & 3]);
+                CGA_OUT(b[(x + 3) & 3]);
         OUT(CGA_Composite_Table[(border << 6) | ((*rgbi) << 2) | 3]);
         for (x = 0; x < w - 1; ++x) {
                 OUT(CGA_Composite_Table[(rgbi[0] << 6) | (rgbi[1] << 2) | (x & 3)]);
@@ -224,7 +224,7 @@ Bit8u *Composite_Process(uint8_t cgamode, Bit8u border, Bit32u blocks /*, bool d
                 }
         }
 #undef COMPOSITE_CONVERT
-#undef OUT
+#undef CGA_OUT
 
         return TempLine;
 }
