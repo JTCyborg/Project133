@@ -29,6 +29,17 @@ include(${CMAKE_SOURCE_DIR}/cmake/arch-detect.cmake)
 
 target_architecture(PCEM_CPU_TYPE)
 
+# MSVC identifies x64 as AMD64, while PCem's codegen backends use x86_64.
+# Normalize the target from the compiler's pointer size so the native x64 JIT
+# backend is included in Visual Studio builds.
+if(MSVC)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(PCEM_CPU_TYPE "x86_64")
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(PCEM_CPU_TYPE "i386")
+    endif()
+endif()
+
 # Apply the MSVC compatibility header to all project targets, including
 # pcem-plugin-api, which is built as a separate DLL.
 if(MSVC)
