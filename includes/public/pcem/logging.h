@@ -1,6 +1,8 @@
 #ifndef __PCEM_LOGGING_H__
 #define __PCEM_LOGGING_H__
 
+#include <stdint.h>
+
 #include <pcem/api.h>
 
 #define printf pclog
