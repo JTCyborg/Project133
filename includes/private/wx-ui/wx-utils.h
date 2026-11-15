@@ -178,7 +178,13 @@ extern void (*wx_idle_func)(void *window, void *event);
 #define WX_MB_NODEFAULT wxYES_NO | wxNO_DEFAULT
 #define WX_IDOK wxOK
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int has_been_inited;
+#ifdef __cplusplus
+}
+#endif
 
 #define ID_IS(s) wParam == wx_xrcid(s)
 #define ID_RANGE(a, b) wParam >= wx_xrcid(a) && wParam <= wx_xrcid(b)
