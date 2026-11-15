@@ -27,7 +27,13 @@ extern int win_doresize;
 
 extern int window_doreset;
 extern int window_dosetresize;
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int renderer_doreset;
+#ifdef __cplusplus
+}
+#endif
 extern int window_dofullscreen;
 extern int window_dowindowed;
 extern int window_doremember;
