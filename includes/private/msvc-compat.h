@@ -8,6 +8,15 @@
 /* Avoid Windows min/max macros breaking qualified C++ standard-library calls. */
 #ifndef NOMINMAX
 #define NOMINMAX
+
+/* POSIX large-file positioning API compatibility. */
+#ifndef fseeko64
+#define fseeko64 _fseeki64
+#endif
+#ifndef ftello64
+#define ftello64 _ftelli64
+#endif
+
 #endif
 
 /* Load Winsock 2 before any Windows header can pull in legacy winsock.h. */
