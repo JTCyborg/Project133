@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+
+#include <pcem/logging.h>
 #include <errno.h>
 
 #include "config.h"
