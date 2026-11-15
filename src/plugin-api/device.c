@@ -3,12 +3,10 @@
 #include <pcem/logging.h>
 #include <string.h>
 #include <pcem/config.h>
+#include "device.h"
 
 extern void *device_priv[256];
 extern device_t *devices[DEV_MAX];
-extern device_t *current_device;
-extern char *current_device_name;
-
 extern struct device_t *model_getdevice(int model);
 
 int model;
