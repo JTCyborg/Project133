@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include "ramdisk/ramdisk.h"
 
 #define KB_SIZE * 1024
 #define MB_SIZE * (1024 KB_SIZE)
@@ -134,9 +135,9 @@ size_t ramdisk_stream_copy_buf(void *dst, size_t dst_size, const void *src, size
 
 /* Disk section */
 
-typedef struct ramdisk {
+struct ramdisk {
         ramdisk_stream_t *stream;
-} ramdisk_t;
+};
 
 ramdisk_t *ramdisk_init() {
         ramdisk_t *ramdisk = (ramdisk_t *)malloc(sizeof(ramdisk_t));
