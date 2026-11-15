@@ -84,14 +84,14 @@ int fizz = 0;
 static Slirp *slirp_instance = NULL;
 
 /* libslirp callbacks */
-static ssize_t pcem_slirp_send_packet(const void *buf, size_t len, void *opaque) {
+static slirp_ssize_t pcem_slirp_send_packet(const void *buf, size_t len, void *opaque) {
         struct queuepacket *p = (struct queuepacket *)malloc(sizeof(struct queuepacket));
         if (!p)
                 return -1;
         p->len = (int)(len > 2000 ? 2000 : len);
         memcpy(p->data, buf, p->len);
         QueueEnter(slirpq, p);
-        return (ssize_t)len;
+        return (slirp_ssize_t)len;
 }
 
 static void pcem_slirp_guest_error(const char *msg, void *opaque) {
