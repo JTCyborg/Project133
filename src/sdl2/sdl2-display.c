@@ -530,19 +530,28 @@ static int windows_setup() {
         wincl.hInstance = hinstance;
         wincl.lpszClassName = szMsgClassName;
         wincl.lpfnWndProc = MsgWindowProcedure;
-        if (!RegisterClassExA(&wincl))
+        if (!RegisterClassExA(&wincl)) {
+                DWORD error = GetLastError();
+                pclog("windows_setup: RegisterClassExA failed for %s (error %lu)\\n", szMsgClassName, (unsigned long)error);
                 return 0;
+        }
 
         wincl.lpszClassName = szSubClassName;
         wincl.lpfnWndProc = subWindowProcedure;
         wincl.style = CS_OWNDC;
         wincl.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-        if (!RegisterClassExA(&wincl))
+        if (!RegisterClassExA(&wincl)) {
+                DWORD error = GetLastError();
+                pclog("windows_setup: RegisterClassExA failed for %s (error %lu)\\n", szSubClassName, (unsigned long)error);
                 return 0;
+        }
 
         msg_hwnd = CreateWindowExA(0, szMsgClassName, "", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, hinstance, NULL);
-        if (!msg_hwnd)
+        if (!msg_hwnd) {
+                DWORD error = GetLastError();
+                pclog("windows_setup: CreateWindowExA failed (error %lu)\\n", (unsigned long)error);
                 return 0;
+        }
 
         get_registry_key_map();
 
