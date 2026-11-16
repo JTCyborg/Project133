@@ -475,10 +475,11 @@ LRESULT CALLBACK MsgWindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPAR
         switch (message) {
         case WM_NCCREATE:
                 pclog("MsgWindowProcedure: WM_NCCREATE hwnd=%p\\n", (void *)hwnd);
-                break;
+                /* A window must explicitly accept non-client creation. */
+                return TRUE;
         case WM_CREATE:
                 pclog("MsgWindowProcedure: WM_CREATE hwnd=%p\\n", (void *)hwnd);
-                break;
+                return 0;
         case WM_INPUT:
                 if (infocus)
                         process_raw_input(lParam);
