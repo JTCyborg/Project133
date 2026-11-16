@@ -473,6 +473,12 @@ static void process_raw_input(LPARAM lParam) {
 
 LRESULT CALLBACK MsgWindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         switch (message) {
+        case WM_NCCREATE:
+                pclog("MsgWindowProcedure: WM_NCCREATE hwnd=%p\\n", (void *)hwnd);
+                break;
+        case WM_CREATE:
+                pclog("MsgWindowProcedure: WM_CREATE hwnd=%p\\n", (void *)hwnd);
+                break;
         case WM_INPUT:
                 if (infocus)
                         process_raw_input(lParam);
@@ -546,12 +552,15 @@ static int windows_setup() {
                 return 0;
         }
 
+        SetLastError(ERROR_SUCCESS);
         msg_hwnd = CreateWindowExA(0, szMsgClassName, "", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, hinstance, NULL);
         if (!msg_hwnd) {
                 DWORD error = GetLastError();
-                pclog("windows_setup: CreateWindowExA failed (error %lu)\\n", (unsigned long)error);
+                pclog("windows_setup: CreateWindowExA failed class=%s hinstance=%p parent=HWND_MESSAGE error=%lu\\n",
+                      szMsgClassName, (void *)hinstance, (unsigned long)error);
                 return 0;
         }
+        pclog("windows_setup: message-only window created hwnd=%p\\n", (void *)msg_hwnd);
 
         get_registry_key_map();
 
