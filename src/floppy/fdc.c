@@ -347,8 +347,8 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                         fdc.data_ready = 0;
 
                         fdc.command = val;
-                        pclog("[FDCDBG] CMD=%02X DOR=%02X drive=%d rate=%d dma=%d pc=%04X:%04X\n",
-                              fdc.command, fdc.dor, fdc.drive, fdc.rate, fdc.dma, cs >> 4, pc);
+                        pclog("[FDCDBG] CMD=%02X DOR=%02X drive=%d rate=%d dma=%d\n",
+                              fdc.command, fdc.dor, fdc.drive, fdc.rate, fdc.dma);
                         switch (fdc.command) {
                         case 1: /*Mode*/
                                 if (!fdc.is_nsc)
