@@ -1,6 +1,7 @@
 #include "paths.h"
 #include "config.h"
 #include <string.h>
+#include <stdio.h>
 #include <SDL.h>
 #include <sys/stat.h>
 #include "ibm.h"
