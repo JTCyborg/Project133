@@ -170,7 +170,6 @@ void disc_set_rate(int drive, int drvden, int rate) {
                         disc_period = 4;
                         break;
                 }
-                break;
         case 2: /*Double density*/
                 disc_period = 32;
                 break;
@@ -184,12 +183,8 @@ void disc_reset() {
         int drive;
 
         curdrive = 0;
-        disc_drivesel = 0;
         disc_period = 32;
-        motoron = 0;
-        disc_notfound = 0;
         timer_add(&disc_poll_timer, (void *)disc_poll, NULL, 0);
-        timer_disable(&disc_poll_timer);
 
         for (drive = 0; drive < 2; drive++) {
                 if (loaders[driveloaders[drive]].close)
