@@ -22,13 +22,17 @@ uint8_t pclog_start() {
 #ifndef RELEASE_BUILD
         if (!pclogf) {
                 char buf[1024];
-                strcpy(buf, logs_path);
-                put_backslash(buf);
-                strcat(buf, "pcem.log");
+                int path_length = snprintf(buf, sizeof(buf), "%spcem.log", logs_path);
+
+                if (path_length < 0 || (size_t)path_length >= sizeof(buf)) {
+                        fprintf(stderr, "PCem log path is too long: %s\\n", logs_path);
+                        return 0;
+                }
+
                 pclogf = fopen(buf, "wt");
 
                 if (NULL == pclogf) {
-                        fprintf(stderr, "Could not open log file for writing: %s", strerror(errno));
+                        fprintf(stderr, "Could not open log file for writing '%s': %s\\n", buf, strerror(errno));
                         return 0;
                 }
         }
