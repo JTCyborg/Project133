@@ -30,6 +30,29 @@ char plugins_default_path[512];
 
 char nvr_default_path[512];
 
+/* Create a configured directory if it does not already exist. */
+static int ensure_directory(const char *path) {
+        char directory[512];
+        size_t length;
+
+        safe_strncpy(directory, path, sizeof(directory));
+        length = strlen(directory);
+        while (length > 1 && (directory[length - 1] == '/' || directory[length - 1] == '\\'))
+                directory[--length] = 0;
+
+        if (!pcem_dir_exists(directory) && !pcem_create_directory(directory)) {
+                fprintf(stderr, "Could not create directory: %s\n", directory);
+                return 0;
+        }
+
+        if (!pcem_dir_exists(directory)) {
+                fprintf(stderr, "Path is not a directory: %s\n", directory);
+                return 0;
+        }
+
+        return 1;
+}
+
 char get_path_separator() {
 #ifdef _WIN32
         return ';';
@@ -184,6 +207,9 @@ void paths_onconfigloaded() {
         if (strlen(default_screenshots_path) > 0)
                 set_screenshots_path(default_screenshots_path);
 
+        /* The log directory may be overridden by pcem.cfg. */
+        ensure_directory(logs_path);
+
         pclog("path = %s\n", pcem_path);
 }
 
@@ -194,6 +220,8 @@ void paths_init() {
         char *p;
 
         get_pcem_path(pcem_path, 512);
+        /* Ensure the per-user/application directory exists before creating subdirectories. */
+        ensure_directory(pcem_path);
         /* pcem_path may be path to executable */
         p = get_filename(pcem_path);
         *p = 0;
@@ -209,6 +237,7 @@ void paths_init() {
         set_default_screenshots_path(s);
         append_filename(s, pcem_path, "logs/", 512);
         set_default_logs_path(s);
+        ensure_directory(logs_path);
         append_filename(s, pcem_path, "nvr/default/", 512);
         set_default_nvr_default_path(s);
 
