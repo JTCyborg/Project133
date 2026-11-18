@@ -1,4 +1,14 @@
-if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" AND NOT PCEM_RELDEB_AS_RELEASE))
+if(CMAKE_CONFIGURATION_TYPES)
+        # Visual Studio and other multi-config generators select the build
+        # configuration at build time, so CMAKE_BUILD_TYPE is empty here.
+        set(PCEM_DEFINES ${PCEM_DEFINES} "$<$<CONFIG:Debug>:DEBUG>")
+        if(PCEM_RELDEB_AS_RELEASE)
+                set(PCEM_DEFINES ${PCEM_DEFINES} "$<$<CONFIG:RelWithDebInfo>:RELEASE_BUILD>")
+        else()
+                set(PCEM_DEFINES ${PCEM_DEFINES} "$<$<CONFIG:RelWithDebInfo>:DEBUG>")
+        endif()
+        set(PCEM_DEFINES ${PCEM_DEFINES} "$<$<OR:$<CONFIG:Release>,$<CONFIG:MinSizeRel>>:RELEASE_BUILD>")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug" OR (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" AND NOT PCEM_RELDEB_AS_RELEASE))
         set(PCEM_DEFINES ${PCEM_DEFINES} DEBUG)
 
         if(PCEM_SLIRP_DEBUG)
