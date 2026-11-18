@@ -285,6 +285,8 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
         case 1:
                 return;
         case 2: /*DOR*/
+                pclog("[FDCDBG] DOR-WRITE old=%02X new=%02X drive=%u motorA=%u motorB=%u reset=%u irq_dma=%u\n",
+                      fdc.dor, val, val & 3, (val >> 4) & 1, (val >> 5) & 1, (val >> 2) & 1, (val >> 3) & 1);
                 //                if (val == 0xD && (cs >> 4) == 0xFC81600 && ins > 769619936) output = 3;
                 //                printf("DOR was %02X\n",fdc.dor);
                 if (fdc.pcjr) {
@@ -497,6 +499,7 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                                 break;
                         }
                 } else {
+                        pclog("[FDCDBG] PARAM cmd=%02X index=%d/%d value=%02X\n", fdc.command, fdc.pnum + 1, fdc.ptot, val);
                         fdc.params[fdc.pnum++] = val;
                         if (fdc.pnum == fdc.ptot) {
                                 uint64_t time;
