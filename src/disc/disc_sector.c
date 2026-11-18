@@ -70,6 +70,9 @@ static int get_bitcell_period() {
 }
 
 void disc_sector_readsector(int drive, int sector, int track, int side, int rate, int sector_size) {
+        pclog("[FDCDBG] MEDIA-READ request drive=%d CHS=%d/%d/%d N=%d rate=%d fdc_bitcell=%d drive_type=%d medium=%d\n",
+              drive, track, side, sector, sector_size, rate, fdc_get_bitcell_period(),
+              fdd_get_type(drive), fdd_can_read_medium(drive));
         //        pclog("disc_sector_readsector: fdc_period=%i img_period=%i rate=%i sector=%i track=%i side=%i\n",
         //        fdc_get_bitcell_period(), get_bitcell_period(), rate, sector, track, side);
 
@@ -191,6 +194,9 @@ void disc_sector_poll() {
                         advance_byte();
                         break;
                 }
+                pclog("[FDCDBG] SECTOR-MATCH drive=%d image_CHRN=%d/%d/%d/%d requested=%d/%d/%d/%d image_rate=%d fdc_bitcell=%d image_bitcell=%d\n",
+                      disc_sector_drive, s->c, s->h, s->r, s->n, disc_sector_track, disc_sector_side,
+                      disc_sector_sector, disc_sector_n, s->rate, fdc_get_bitcell_period(), get_bitcell_period());
                 disc_sector_state = STATE_READ_SECTOR;
         case STATE_READ_SECTOR:
                 //                pclog("STATE_READ_SECTOR: cur_byte=%i %i\n", cur_byte, disc_intersector_delay);
@@ -200,6 +206,8 @@ void disc_sector_poll() {
                 }
                 advance_byte();
                 if (!cur_byte) {
+                        pclog("[FDCDBG] MEDIA-SECTOR-COMPLETE drive=%d CHRN=%d/%d/%d/%d bytes=%d\n",
+                              disc_sector_drive, s->c, s->h, s->r, s->n, 128 << s->n);
                         disc_sector_state = STATE_IDLE;
                         fdc_finishread();
                 }
