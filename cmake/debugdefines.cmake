@@ -1,3 +1,5 @@
+option(PCEM_ENABLE_LOGGING "Enable PCem log output in Release builds" ON)
+
 if(CMAKE_CONFIGURATION_TYPES)
         # Visual Studio and other multi-config generators select the build
         # configuration at build time, so CMAKE_BUILD_TYPE is empty here.
@@ -40,4 +42,8 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug" OR (CMAKE_BUILD_TYPE STREQUAL "RelWithD
         endif()
 else()
         set(PCEM_DEFINES ${PCEM_DEFINES} RELEASE_BUILD)
+endif()
+
+if(PCEM_ENABLE_LOGGING)
+        set(PCEM_DEFINES ${PCEM_DEFINES} PCEM_ENABLE_LOGGING)
 endif()
