@@ -1280,6 +1280,16 @@ void fdc_indexpulse() {
 }
 
 void fdc_init() {
+        /*
+         * fdc is static and survives machine reconfiguration in the same
+         * PCem process. Clear the controller's per-drive Present Cylinder
+         * Numbers so the first post-init SENSE INTERRUPT STATUS cannot report
+         * a cylinder left over from the previous machine/session.
+         */
+        memset(fdc.track, 0, sizeof(fdc.track));
+        fdc_reset_stat = 0;
+        fdc.int_pending = 0;
+
         timer_add(&fdc.timer, (void *)fdc_callback, NULL, 0);
         fdc.dskchg_activelow = 0;
         fdc.enable_3f1 = 1;
