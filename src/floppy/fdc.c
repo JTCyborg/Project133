@@ -931,8 +931,16 @@ void fdc_callback() {
                 else
                         fdc.res[9] = fdc.st0;
                 fdc.res[10] = fdc.track[fdc.drive];
-                if (fdc_reset_stat)
+                if (fdc_reset_stat) {
                         fdc_reset_stat--;
+                        /* The 765 reports one reset-completion interrupt per drive.
+                         * Reassert IRQ6 after each SENSE INTERRUPT STATUS so the
+                         * remaining reset statuses are delivered instead of being
+                         * left pending indefinitely after the first acknowledgement.
+                         */
+                        if (fdc_reset_stat)
+                                fdc_int();
+                }
                 if (!fdc_reset_stat)
                         fdc.int_pending = 0;
 
