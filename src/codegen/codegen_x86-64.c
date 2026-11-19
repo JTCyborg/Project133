@@ -1,4 +1,4 @@
-#if defined(__amd64__) || defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64)
+#ifdef __amd64__
 
 #include <stdlib.h>
 #include "ibm.h"

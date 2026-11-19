@@ -1,4 +1,4 @@
-#if defined(__amd64__) || defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64)
+#ifdef __amd64__
 
 #include "ibm.h"
 #include "codegen.h"
@@ -9,10 +9,6 @@
 #include "codegen_backend_x86-64_ops_sse.h"
 #include "codegen_reg.h"
 #include "x86.h"
-
-#if defined(_MSC_VER)
-#include <xmmintrin.h>
-#endif
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <sys/mman.h>
@@ -316,11 +312,7 @@ void codegen_backend_init() {
 
         block_write_data = NULL;
 
-#if defined(_MSC_VER)
-        cpu_state.old_fp_control = _mm_getcsr();
-#else
         asm("stmxcsr %0\n" : "=m"(cpu_state.old_fp_control));
-#endif
         cpu_state.trunc_fp_control = cpu_state.old_fp_control | 0x6000;
 }
 

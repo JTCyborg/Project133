@@ -112,7 +112,7 @@ void flushmmucache() {
         mmuflush++;
         //        readlnum=writelnum=0;
         pccache = (uint32_t)0xFFFFFFFF;
-        pccache2 = (uint8_t *)(uintptr_t)UINTPTR_MAX;
+        pccache2 = (uint8_t *)0xFFFFFFFF;
 
         //        memset(readlookup,0xFF,sizeof(readlookup));
         //        memset(readlookup2,0xFF,1024*1024*4);
@@ -476,10 +476,8 @@ void writemembl(uint32_t addr, uint8_t val) {
         addr &= rammask;
 
         map = write_mapping[addr >> 14];
-        if (map && map->write_b) {
-                map->write_b(addr, val, map->p);
-                return;
-        }
+        if (map && map->write_b)
+                return map->write_b(addr, val, map->p);
         //        else                          pclog("Bad writemembl %08X %02X  %04X:%08X\n", addr, val, CS, pc);
 }
 

@@ -3,13 +3,11 @@
 #include <windows.h>
 #include <io.h>
 #ifdef __MINGW64_VERSION_MAJOR
-#include <ntddcdrm.h>
-#include <ntddscsi.h>
+#include "ntddcdrm.h"
+#include "ntddscsi.h"
 #else
-/* Windows SDK/WDK expose these headers from the shared include directory.
- * The legacy ddk/ prefix is not a valid MSVC include path. */
-#include <ntddcdrm.h>
-#include <ntddscsi.h>
+#include "ddk/ntddcdrm.h"
+#include "ddk/ntddscsi.h"
 #endif
 #include "ibm.h"
 #include "ide.h"
@@ -17,6 +15,15 @@
 
 int cdrom_drive;
 int old_cdrom_drive;
+
+#ifndef __MINGW64_VERSION_MAJOR
+typedef struct _CDROM_TOC_SESSION_DATA {
+        UCHAR Length[2];
+        UCHAR FirstCompleteSession;
+        UCHAR LastCompleteSession;
+        TRACK_DATA TrackData[1];
+} CDROM_TOC_SESSION_DATA, *PCDROM_TOC_SESSION_DATA;
+#endif
 
 static ATAPI ioctl_atapi;
 
@@ -662,9 +669,9 @@ static int ioctl_readtoc_raw(unsigned char *b, int maxlen) {
         return len;
 }
 
-static uint32_t ioctl_size(void) { return cdrom_capacity; }
+static uint32_t ioctl_size() { return cdrom_capacity; }
 
-static int ioctl_status(void) {
+static int ioctl_status() {
         if (!(ioctl_ready()) && (cdrom_drive <= 0))
                 return CD_STATUS_EMPTY;
 
@@ -710,7 +717,7 @@ void ioctl_set_drive(char d) {
 int ioctl_open(char d) {
         if (hIOCTL)
                 ioctl_close();
-        hIOCTL = CreateFileA(ioctl_path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0,
+        hIOCTL = CreateFile(ioctl_path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0,
                             NULL);
         if (!hIOCTL) {
                 // fatal("IOCTL");

@@ -28,7 +28,7 @@ typedef struct host_reg_set_t {
 
 static host_reg_set_t host_reg_set, host_fp_reg_set;
 
-enum { CODEGEN_REG_BYTE, CODEGEN_REG_WORD, CODEGEN_REG_DWORD, CODEGEN_REG_QWORD, CODEGEN_REG_POINTER, CODEGEN_REG_DOUBLE, CODEGEN_REG_FPU_ST_BYTE, CODEGEN_REG_FPU_ST_DOUBLE, CODEGEN_REG_FPU_ST_QWORD };
+enum { REG_BYTE, REG_WORD, REG_DWORD, REG_QWORD, REG_POINTER, REG_DOUBLE, REG_FPU_ST_BYTE, REG_FPU_ST_DOUBLE, REG_FPU_ST_QWORD };
 
 enum { REG_INTEGER, REG_FP };
 
@@ -47,116 +47,116 @@ struct {
         int type;
         int is_volatile;
 } ireg_data[IREG_COUNT] = {
-        [IREG_EAX] = {CODEGEN_REG_DWORD, &EAX, REG_INTEGER, REG_PERMANENT},
-        [IREG_ECX] = {CODEGEN_REG_DWORD, &ECX, REG_INTEGER, REG_PERMANENT},
-        [IREG_EDX] = {CODEGEN_REG_DWORD, &EDX, REG_INTEGER, REG_PERMANENT},
-        [IREG_EBX] = {CODEGEN_REG_DWORD, &EBX, REG_INTEGER, REG_PERMANENT},
-        [IREG_ESP] = {CODEGEN_REG_DWORD, &ESP, REG_INTEGER, REG_PERMANENT},
-        [IREG_EBP] = {CODEGEN_REG_DWORD, &EBP, REG_INTEGER, REG_PERMANENT},
-        [IREG_ESI] = {CODEGEN_REG_DWORD, &ESI, REG_INTEGER, REG_PERMANENT},
-        [IREG_EDI] = {CODEGEN_REG_DWORD, &EDI, REG_INTEGER, REG_PERMANENT},
+        [IREG_EAX] = {REG_DWORD, &EAX, REG_INTEGER, REG_PERMANENT},
+        [IREG_ECX] = {REG_DWORD, &ECX, REG_INTEGER, REG_PERMANENT},
+        [IREG_EDX] = {REG_DWORD, &EDX, REG_INTEGER, REG_PERMANENT},
+        [IREG_EBX] = {REG_DWORD, &EBX, REG_INTEGER, REG_PERMANENT},
+        [IREG_ESP] = {REG_DWORD, &ESP, REG_INTEGER, REG_PERMANENT},
+        [IREG_EBP] = {REG_DWORD, &EBP, REG_INTEGER, REG_PERMANENT},
+        [IREG_ESI] = {REG_DWORD, &ESI, REG_INTEGER, REG_PERMANENT},
+        [IREG_EDI] = {REG_DWORD, &EDI, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_flags_op] = {CODEGEN_REG_DWORD, &cpu_state.flags_op, REG_INTEGER, REG_PERMANENT},
-        [IREG_flags_res] = {CODEGEN_REG_DWORD, &cpu_state.flags_res, REG_INTEGER, REG_PERMANENT},
-        [IREG_flags_op1] = {CODEGEN_REG_DWORD, &cpu_state.flags_op1, REG_INTEGER, REG_PERMANENT},
-        [IREG_flags_op2] = {CODEGEN_REG_DWORD, &cpu_state.flags_op2, REG_INTEGER, REG_PERMANENT},
+        [IREG_flags_op] = {REG_DWORD, &cpu_state.flags_op, REG_INTEGER, REG_PERMANENT},
+        [IREG_flags_res] = {REG_DWORD, &cpu_state.flags_res, REG_INTEGER, REG_PERMANENT},
+        [IREG_flags_op1] = {REG_DWORD, &cpu_state.flags_op1, REG_INTEGER, REG_PERMANENT},
+        [IREG_flags_op2] = {REG_DWORD, &cpu_state.flags_op2, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_pc] = {CODEGEN_REG_DWORD, &cpu_state.pc, REG_INTEGER, REG_PERMANENT},
-        [IREG_oldpc] = {CODEGEN_REG_DWORD, &cpu_state.oldpc, REG_INTEGER, REG_PERMANENT},
+        [IREG_pc] = {REG_DWORD, &cpu_state.pc, REG_INTEGER, REG_PERMANENT},
+        [IREG_oldpc] = {REG_DWORD, &cpu_state.oldpc, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_eaaddr] = {CODEGEN_REG_DWORD, &cpu_state.eaaddr, REG_INTEGER, REG_PERMANENT},
-        [IREG_ea_seg] = {CODEGEN_REG_POINTER, &cpu_state.ea_seg, REG_INTEGER, REG_PERMANENT},
+        [IREG_eaaddr] = {REG_DWORD, &cpu_state.eaaddr, REG_INTEGER, REG_PERMANENT},
+        [IREG_ea_seg] = {REG_POINTER, &cpu_state.ea_seg, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_op32] = {CODEGEN_REG_DWORD, &cpu_state.op32, REG_INTEGER, REG_PERMANENT},
-        [IREG_ssegsx] = {CODEGEN_REG_BYTE, &cpu_state.ssegs, REG_INTEGER, REG_PERMANENT},
+        [IREG_op32] = {REG_DWORD, &cpu_state.op32, REG_INTEGER, REG_PERMANENT},
+        [IREG_ssegsx] = {REG_BYTE, &cpu_state.ssegs, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_rm_mod_reg] = {CODEGEN_REG_DWORD, &cpu_state.rm_data.rm_mod_reg_data, REG_INTEGER, REG_PERMANENT},
+        [IREG_rm_mod_reg] = {REG_DWORD, &cpu_state.rm_data.rm_mod_reg_data, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_ins] = {CODEGEN_REG_DWORD, &cpu_state.cpu_recomp_ins, REG_INTEGER, REG_PERMANENT},
-        [IREG_cycles] = {CODEGEN_REG_DWORD, &cpu_state._cycles, REG_INTEGER, REG_PERMANENT},
+        [IREG_ins] = {REG_DWORD, &cpu_state.cpu_recomp_ins, REG_INTEGER, REG_PERMANENT},
+        [IREG_cycles] = {REG_DWORD, &cpu_state._cycles, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_CS_base] = {CODEGEN_REG_DWORD, &cpu_state.seg_cs.base, REG_INTEGER, REG_PERMANENT},
-        [IREG_DS_base] = {CODEGEN_REG_DWORD, &cpu_state.seg_ds.base, REG_INTEGER, REG_PERMANENT},
-        [IREG_ES_base] = {CODEGEN_REG_DWORD, &cpu_state.seg_es.base, REG_INTEGER, REG_PERMANENT},
-        [IREG_FS_base] = {CODEGEN_REG_DWORD, &cpu_state.seg_fs.base, REG_INTEGER, REG_PERMANENT},
-        [IREG_GS_base] = {CODEGEN_REG_DWORD, &cpu_state.seg_gs.base, REG_INTEGER, REG_PERMANENT},
-        [IREG_SS_base] = {CODEGEN_REG_DWORD, &cpu_state.seg_ss.base, REG_INTEGER, REG_PERMANENT},
+        [IREG_CS_base] = {REG_DWORD, &cpu_state.seg_cs.base, REG_INTEGER, REG_PERMANENT},
+        [IREG_DS_base] = {REG_DWORD, &cpu_state.seg_ds.base, REG_INTEGER, REG_PERMANENT},
+        [IREG_ES_base] = {REG_DWORD, &cpu_state.seg_es.base, REG_INTEGER, REG_PERMANENT},
+        [IREG_FS_base] = {REG_DWORD, &cpu_state.seg_fs.base, REG_INTEGER, REG_PERMANENT},
+        [IREG_GS_base] = {REG_DWORD, &cpu_state.seg_gs.base, REG_INTEGER, REG_PERMANENT},
+        [IREG_SS_base] = {REG_DWORD, &cpu_state.seg_ss.base, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_CS_seg] = {CODEGEN_REG_WORD, &cpu_state.seg_cs.seg, REG_INTEGER, REG_PERMANENT},
-        [IREG_DS_seg] = {CODEGEN_REG_WORD, &cpu_state.seg_ds.seg, REG_INTEGER, REG_PERMANENT},
-        [IREG_ES_seg] = {CODEGEN_REG_WORD, &cpu_state.seg_es.seg, REG_INTEGER, REG_PERMANENT},
-        [IREG_FS_seg] = {CODEGEN_REG_WORD, &cpu_state.seg_fs.seg, REG_INTEGER, REG_PERMANENT},
-        [IREG_GS_seg] = {CODEGEN_REG_WORD, &cpu_state.seg_gs.seg, REG_INTEGER, REG_PERMANENT},
-        [IREG_SS_seg] = {CODEGEN_REG_WORD, &cpu_state.seg_ss.seg, REG_INTEGER, REG_PERMANENT},
+        [IREG_CS_seg] = {REG_WORD, &cpu_state.seg_cs.seg, REG_INTEGER, REG_PERMANENT},
+        [IREG_DS_seg] = {REG_WORD, &cpu_state.seg_ds.seg, REG_INTEGER, REG_PERMANENT},
+        [IREG_ES_seg] = {REG_WORD, &cpu_state.seg_es.seg, REG_INTEGER, REG_PERMANENT},
+        [IREG_FS_seg] = {REG_WORD, &cpu_state.seg_fs.seg, REG_INTEGER, REG_PERMANENT},
+        [IREG_GS_seg] = {REG_WORD, &cpu_state.seg_gs.seg, REG_INTEGER, REG_PERMANENT},
+        [IREG_SS_seg] = {REG_WORD, &cpu_state.seg_ss.seg, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_FPU_TOP] = {CODEGEN_REG_DWORD, &cpu_state.TOP, REG_INTEGER, REG_PERMANENT},
+        [IREG_FPU_TOP] = {REG_DWORD, &cpu_state.TOP, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_ST0] = {CODEGEN_REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
-        [IREG_ST1] = {CODEGEN_REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
-        [IREG_ST2] = {CODEGEN_REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
-        [IREG_ST3] = {CODEGEN_REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
-        [IREG_ST4] = {CODEGEN_REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
-        [IREG_ST5] = {CODEGEN_REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
-        [IREG_ST6] = {CODEGEN_REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
-        [IREG_ST7] = {CODEGEN_REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
+        [IREG_ST0] = {REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
+        [IREG_ST1] = {REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
+        [IREG_ST2] = {REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
+        [IREG_ST3] = {REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
+        [IREG_ST4] = {REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
+        [IREG_ST5] = {REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
+        [IREG_ST6] = {REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
+        [IREG_ST7] = {REG_FPU_ST_DOUBLE, &cpu_state.ST[0], REG_FP, REG_PERMANENT},
 
-        [IREG_tag0] = {CODEGEN_REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
-        [IREG_tag1] = {CODEGEN_REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
-        [IREG_tag2] = {CODEGEN_REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
-        [IREG_tag3] = {CODEGEN_REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
-        [IREG_tag4] = {CODEGEN_REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
-        [IREG_tag5] = {CODEGEN_REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
-        [IREG_tag6] = {CODEGEN_REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
-        [IREG_tag7] = {CODEGEN_REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
+        [IREG_tag0] = {REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
+        [IREG_tag1] = {REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
+        [IREG_tag2] = {REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
+        [IREG_tag3] = {REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
+        [IREG_tag4] = {REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
+        [IREG_tag5] = {REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
+        [IREG_tag6] = {REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
+        [IREG_tag7] = {REG_FPU_ST_BYTE, &cpu_state.tag[0], REG_INTEGER, REG_PERMANENT},
 
-        [IREG_ST0_i64] = {CODEGEN_REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
-        [IREG_ST1_i64] = {CODEGEN_REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
-        [IREG_ST2_i64] = {CODEGEN_REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
-        [IREG_ST3_i64] = {CODEGEN_REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
-        [IREG_ST4_i64] = {CODEGEN_REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
-        [IREG_ST5_i64] = {CODEGEN_REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
-        [IREG_ST6_i64] = {CODEGEN_REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
-        [IREG_ST7_i64] = {CODEGEN_REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_ST0_i64] = {REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_ST1_i64] = {REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_ST2_i64] = {REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_ST3_i64] = {REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_ST4_i64] = {REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_ST5_i64] = {REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_ST6_i64] = {REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_ST7_i64] = {REG_FPU_ST_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
 
-        [IREG_MM0x] = {CODEGEN_REG_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
-        [IREG_MM1x] = {CODEGEN_REG_QWORD, &cpu_state.MM[1], REG_FP, REG_PERMANENT},
-        [IREG_MM2x] = {CODEGEN_REG_QWORD, &cpu_state.MM[2], REG_FP, REG_PERMANENT},
-        [IREG_MM3x] = {CODEGEN_REG_QWORD, &cpu_state.MM[3], REG_FP, REG_PERMANENT},
-        [IREG_MM4x] = {CODEGEN_REG_QWORD, &cpu_state.MM[4], REG_FP, REG_PERMANENT},
-        [IREG_MM5x] = {CODEGEN_REG_QWORD, &cpu_state.MM[5], REG_FP, REG_PERMANENT},
-        [IREG_MM6x] = {CODEGEN_REG_QWORD, &cpu_state.MM[6], REG_FP, REG_PERMANENT},
-        [IREG_MM7x] = {CODEGEN_REG_QWORD, &cpu_state.MM[7], REG_FP, REG_PERMANENT},
+        [IREG_MM0x] = {REG_QWORD, &cpu_state.MM[0], REG_FP, REG_PERMANENT},
+        [IREG_MM1x] = {REG_QWORD, &cpu_state.MM[1], REG_FP, REG_PERMANENT},
+        [IREG_MM2x] = {REG_QWORD, &cpu_state.MM[2], REG_FP, REG_PERMANENT},
+        [IREG_MM3x] = {REG_QWORD, &cpu_state.MM[3], REG_FP, REG_PERMANENT},
+        [IREG_MM4x] = {REG_QWORD, &cpu_state.MM[4], REG_FP, REG_PERMANENT},
+        [IREG_MM5x] = {REG_QWORD, &cpu_state.MM[5], REG_FP, REG_PERMANENT},
+        [IREG_MM6x] = {REG_QWORD, &cpu_state.MM[6], REG_FP, REG_PERMANENT},
+        [IREG_MM7x] = {REG_QWORD, &cpu_state.MM[7], REG_FP, REG_PERMANENT},
 
-        [IREG_NPXCx] = {CODEGEN_REG_WORD, &cpu_state.npxc, REG_INTEGER, REG_PERMANENT},
-        [IREG_NPXSx] = {CODEGEN_REG_WORD, &cpu_state.npxs, REG_INTEGER, REG_PERMANENT},
+        [IREG_NPXCx] = {REG_WORD, &cpu_state.npxc, REG_INTEGER, REG_PERMANENT},
+        [IREG_NPXSx] = {REG_WORD, &cpu_state.npxs, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_flagsx] = {CODEGEN_REG_WORD, &cpu_state.flags, REG_INTEGER, REG_PERMANENT},
-        [IREG_eflagsx] = {CODEGEN_REG_WORD, &cpu_state.eflags, REG_INTEGER, REG_PERMANENT},
+        [IREG_flagsx] = {REG_WORD, &cpu_state.flags, REG_INTEGER, REG_PERMANENT},
+        [IREG_eflagsx] = {REG_WORD, &cpu_state.eflags, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_CS_limit_low] = {CODEGEN_REG_DWORD, &cpu_state.seg_cs.limit_low, REG_INTEGER, REG_PERMANENT},
-        [IREG_DS_limit_low] = {CODEGEN_REG_DWORD, &cpu_state.seg_ds.limit_low, REG_INTEGER, REG_PERMANENT},
-        [IREG_ES_limit_low] = {CODEGEN_REG_DWORD, &cpu_state.seg_es.limit_low, REG_INTEGER, REG_PERMANENT},
-        [IREG_FS_limit_low] = {CODEGEN_REG_DWORD, &cpu_state.seg_fs.limit_low, REG_INTEGER, REG_PERMANENT},
-        [IREG_GS_limit_low] = {CODEGEN_REG_DWORD, &cpu_state.seg_gs.limit_low, REG_INTEGER, REG_PERMANENT},
-        [IREG_SS_limit_low] = {CODEGEN_REG_DWORD, &cpu_state.seg_ss.limit_low, REG_INTEGER, REG_PERMANENT},
+        [IREG_CS_limit_low] = {REG_DWORD, &cpu_state.seg_cs.limit_low, REG_INTEGER, REG_PERMANENT},
+        [IREG_DS_limit_low] = {REG_DWORD, &cpu_state.seg_ds.limit_low, REG_INTEGER, REG_PERMANENT},
+        [IREG_ES_limit_low] = {REG_DWORD, &cpu_state.seg_es.limit_low, REG_INTEGER, REG_PERMANENT},
+        [IREG_FS_limit_low] = {REG_DWORD, &cpu_state.seg_fs.limit_low, REG_INTEGER, REG_PERMANENT},
+        [IREG_GS_limit_low] = {REG_DWORD, &cpu_state.seg_gs.limit_low, REG_INTEGER, REG_PERMANENT},
+        [IREG_SS_limit_low] = {REG_DWORD, &cpu_state.seg_ss.limit_low, REG_INTEGER, REG_PERMANENT},
 
-        [IREG_CS_limit_high] = {CODEGEN_REG_DWORD, &cpu_state.seg_cs.limit_high, REG_INTEGER, REG_PERMANENT},
-        [IREG_DS_limit_high] = {CODEGEN_REG_DWORD, &cpu_state.seg_ds.limit_high, REG_INTEGER, REG_PERMANENT},
-        [IREG_ES_limit_high] = {CODEGEN_REG_DWORD, &cpu_state.seg_es.limit_high, REG_INTEGER, REG_PERMANENT},
-        [IREG_FS_limit_high] = {CODEGEN_REG_DWORD, &cpu_state.seg_fs.limit_high, REG_INTEGER, REG_PERMANENT},
-        [IREG_GS_limit_high] = {CODEGEN_REG_DWORD, &cpu_state.seg_gs.limit_high, REG_INTEGER, REG_PERMANENT},
-        [IREG_SS_limit_high] = {CODEGEN_REG_DWORD, &cpu_state.seg_ss.limit_high, REG_INTEGER, REG_PERMANENT},
+        [IREG_CS_limit_high] = {REG_DWORD, &cpu_state.seg_cs.limit_high, REG_INTEGER, REG_PERMANENT},
+        [IREG_DS_limit_high] = {REG_DWORD, &cpu_state.seg_ds.limit_high, REG_INTEGER, REG_PERMANENT},
+        [IREG_ES_limit_high] = {REG_DWORD, &cpu_state.seg_es.limit_high, REG_INTEGER, REG_PERMANENT},
+        [IREG_FS_limit_high] = {REG_DWORD, &cpu_state.seg_fs.limit_high, REG_INTEGER, REG_PERMANENT},
+        [IREG_GS_limit_high] = {REG_DWORD, &cpu_state.seg_gs.limit_high, REG_INTEGER, REG_PERMANENT},
+        [IREG_SS_limit_high] = {REG_DWORD, &cpu_state.seg_ss.limit_high, REG_INTEGER, REG_PERMANENT},
 
         /*Temporary registers are stored on the stack, and are not guaranteed to
           be preserved across uOPs. They will not be written back if they will
           not be read again.*/
-        [IREG_temp0] = {CODEGEN_REG_DWORD, (void *)16, REG_INTEGER, REG_VOLATILE},
-        [IREG_temp1] = {CODEGEN_REG_DWORD, (void *)20, REG_INTEGER, REG_VOLATILE},
-        [IREG_temp2] = {CODEGEN_REG_DWORD, (void *)24, REG_INTEGER, REG_VOLATILE},
-        [IREG_temp3] = {CODEGEN_REG_DWORD, (void *)28, REG_INTEGER, REG_VOLATILE},
+        [IREG_temp0] = {REG_DWORD, (void *)16, REG_INTEGER, REG_VOLATILE},
+        [IREG_temp1] = {REG_DWORD, (void *)20, REG_INTEGER, REG_VOLATILE},
+        [IREG_temp2] = {REG_DWORD, (void *)24, REG_INTEGER, REG_VOLATILE},
+        [IREG_temp3] = {REG_DWORD, (void *)28, REG_INTEGER, REG_VOLATILE},
 
-        [IREG_temp0d] = {CODEGEN_REG_DOUBLE, (void *)40, REG_FP, REG_VOLATILE},
-        [IREG_temp1d] = {CODEGEN_REG_DOUBLE, (void *)48, REG_FP, REG_VOLATILE},
+        [IREG_temp0d] = {REG_DOUBLE, (void *)40, REG_FP, REG_VOLATILE},
+        [IREG_temp1d] = {REG_DOUBLE, (void *)48, REG_FP, REG_VOLATILE},
 };
 
 void codegen_reg_mark_as_required() {
@@ -175,19 +175,19 @@ int reg_is_native_size(ir_reg_t ir_reg) {
         int requested_size = IREG_GET_SIZE(ir_reg.reg);
 
         switch (native_size) {
-        case CODEGEN_REG_BYTE:
-        case CODEGEN_REG_FPU_ST_BYTE:
+        case REG_BYTE:
+        case REG_FPU_ST_BYTE:
                 return (requested_size == IREG_SIZE_B);
-        case CODEGEN_REG_WORD:
+        case REG_WORD:
                 return (requested_size == IREG_SIZE_W);
-        case CODEGEN_REG_DWORD:
+        case REG_DWORD:
                 return (requested_size == IREG_SIZE_L);
-        case CODEGEN_REG_QWORD:
-        case CODEGEN_REG_FPU_ST_QWORD:
-        case CODEGEN_REG_DOUBLE:
-        case CODEGEN_REG_FPU_ST_DOUBLE:
+        case REG_QWORD:
+        case REG_FPU_ST_QWORD:
+        case REG_DOUBLE:
+        case REG_FPU_ST_DOUBLE:
                 return ((requested_size == IREG_SIZE_D) || (requested_size == IREG_SIZE_Q));
-        case CODEGEN_REG_POINTER:
+        case REG_POINTER:
                 if (sizeof(void *) == 4)
                         return (requested_size == IREG_SIZE_L);
                 return (requested_size == IREG_SIZE_Q);
@@ -241,10 +241,10 @@ static inline host_reg_set_t *get_reg_set(ir_reg_t ir_reg) {
 
 static void codegen_reg_load(host_reg_set_t *reg_set, codeblock_t *block, int c, ir_reg_t ir_reg) {
         switch (ireg_data[IREG_GET_REG(ir_reg.reg)].native_size) {
-        case CODEGEN_REG_WORD:
+        case REG_WORD:
 #ifndef RELEASE_BUILD
                 if (ireg_data[IREG_GET_REG(ir_reg.reg)].type != REG_INTEGER)
-                        fatal("codegen_reg_load - CODEGEN_REG_WORD !REG_INTEGER\n");
+                        fatal("codegen_reg_load - REG_WORD !REG_INTEGER\n");
 #endif
                 if ((uintptr_t)ireg_data[IREG_GET_REG(ir_reg.reg)].p < 256)
                         codegen_direct_read_16_stack(block, reg_set->reg_list[c].reg,
@@ -253,10 +253,10 @@ static void codegen_reg_load(host_reg_set_t *reg_set, codeblock_t *block, int c,
                         codegen_direct_read_16(block, reg_set->reg_list[c].reg, ireg_data[IREG_GET_REG(ir_reg.reg)].p);
                 break;
 
-        case CODEGEN_REG_DWORD:
+        case REG_DWORD:
 #ifndef RELEASE_BUILD
                 if (ireg_data[IREG_GET_REG(ir_reg.reg)].type != REG_INTEGER)
-                        fatal("codegen_reg_load - CODEGEN_REG_DWORD !REG_INTEGER\n");
+                        fatal("codegen_reg_load - REG_DWORD !REG_INTEGER\n");
 #endif
                 if ((uintptr_t)ireg_data[IREG_GET_REG(ir_reg.reg)].p < 256)
                         codegen_direct_read_32_stack(block, reg_set->reg_list[c].reg,
@@ -265,10 +265,10 @@ static void codegen_reg_load(host_reg_set_t *reg_set, codeblock_t *block, int c,
                         codegen_direct_read_32(block, reg_set->reg_list[c].reg, ireg_data[IREG_GET_REG(ir_reg.reg)].p);
                 break;
 
-        case CODEGEN_REG_QWORD:
+        case REG_QWORD:
 #ifndef RELEASE_BUILD
                 if (ireg_data[IREG_GET_REG(ir_reg.reg)].type != REG_FP)
-                        fatal("codegen_reg_load - CODEGEN_REG_QWORD !REG_FP\n");
+                        fatal("codegen_reg_load - REG_QWORD !REG_FP\n");
 #endif
                 if ((uintptr_t)ireg_data[IREG_GET_REG(ir_reg.reg)].p < 256)
                         codegen_direct_read_64_stack(block, reg_set->reg_list[c].reg,
@@ -277,10 +277,10 @@ static void codegen_reg_load(host_reg_set_t *reg_set, codeblock_t *block, int c,
                         codegen_direct_read_64(block, reg_set->reg_list[c].reg, ireg_data[IREG_GET_REG(ir_reg.reg)].p);
                 break;
 
-        case CODEGEN_REG_POINTER:
+        case REG_POINTER:
 #ifndef RELEASE_BUILD
                 if (ireg_data[IREG_GET_REG(ir_reg.reg)].type != REG_INTEGER)
-                        fatal("codegen_reg_load - CODEGEN_REG_POINTER !REG_INTEGER\n");
+                        fatal("codegen_reg_load - REG_POINTER !REG_INTEGER\n");
 #endif
                 if ((uintptr_t)ireg_data[IREG_GET_REG(ir_reg.reg)].p < 256)
                         codegen_direct_read_pointer_stack(block, reg_set->reg_list[c].reg,
@@ -289,10 +289,10 @@ static void codegen_reg_load(host_reg_set_t *reg_set, codeblock_t *block, int c,
                         codegen_direct_read_pointer(block, reg_set->reg_list[c].reg, ireg_data[IREG_GET_REG(ir_reg.reg)].p);
                 break;
 
-        case CODEGEN_REG_DOUBLE:
+        case REG_DOUBLE:
 #ifndef RELEASE_BUILD
                 if (ireg_data[IREG_GET_REG(ir_reg.reg)].type != REG_FP)
-                        fatal("codegen_reg_load - CODEGEN_REG_DOUBLE !REG_FP\n");
+                        fatal("codegen_reg_load - REG_DOUBLE !REG_FP\n");
 #endif
                 if ((uintptr_t)ireg_data[IREG_GET_REG(ir_reg.reg)].p < 256)
                         codegen_direct_read_double_stack(block, reg_set->reg_list[c].reg,
@@ -301,10 +301,10 @@ static void codegen_reg_load(host_reg_set_t *reg_set, codeblock_t *block, int c,
                         codegen_direct_read_double(block, reg_set->reg_list[c].reg, ireg_data[IREG_GET_REG(ir_reg.reg)].p);
                 break;
 
-        case CODEGEN_REG_FPU_ST_BYTE:
+        case REG_FPU_ST_BYTE:
 #ifndef RELEASE_BUILD
                 if (ireg_data[IREG_GET_REG(ir_reg.reg)].type != REG_INTEGER)
-                        fatal("codegen_reg_load - CODEGEN_REG_FPU_ST_BYTE !REG_INTEGER\n");
+                        fatal("codegen_reg_load - REG_FPU_ST_BYTE !REG_INTEGER\n");
 #endif
                 if (block->flags & CODEBLOCK_STATIC_TOP)
                         codegen_direct_read_8(block, reg_set->reg_list[c].reg, &cpu_state.tag[ir_reg.reg & 7]);
@@ -312,10 +312,10 @@ static void codegen_reg_load(host_reg_set_t *reg_set, codeblock_t *block, int c,
                         codegen_direct_read_st_8(block, reg_set->reg_list[c].reg, &cpu_state.tag[0], ir_reg.reg & 7);
                 break;
 
-        case CODEGEN_REG_FPU_ST_QWORD:
+        case REG_FPU_ST_QWORD:
 #ifndef RELEASE_BUILD
                 if (ireg_data[IREG_GET_REG(ir_reg.reg)].type != REG_FP)
-                        fatal("codegen_reg_load - CODEGEN_REG_FPU_ST_QWORD !REG_FP\n");
+                        fatal("codegen_reg_load - REG_FPU_ST_QWORD !REG_FP\n");
 #endif
                 if (block->flags & CODEBLOCK_STATIC_TOP)
                         codegen_direct_read_64(block, reg_set->reg_list[c].reg, &cpu_state.MM[ir_reg.reg & 7]);
@@ -323,10 +323,10 @@ static void codegen_reg_load(host_reg_set_t *reg_set, codeblock_t *block, int c,
                         codegen_direct_read_st_64(block, reg_set->reg_list[c].reg, &cpu_state.MM[0], ir_reg.reg & 7);
                 break;
 
-        case CODEGEN_REG_FPU_ST_DOUBLE:
+        case REG_FPU_ST_DOUBLE:
 #ifndef RELEASE_BUILD
                 if (ireg_data[IREG_GET_REG(ir_reg.reg)].type != REG_FP)
-                        fatal("codegen_reg_load - CODEGEN_REG_FPU_ST_DOUBLE !REG_FP\n");
+                        fatal("codegen_reg_load - REG_FPU_ST_DOUBLE !REG_FP\n");
 #endif
                 if (block->flags & CODEBLOCK_STATIC_TOP)
                         codegen_direct_read_double(block, reg_set->reg_list[c].reg, &cpu_state.ST[ir_reg.reg & 7]);
@@ -352,30 +352,30 @@ static void codegen_reg_writeback(host_reg_set_t *reg_set, codeblock_t *block, i
                 return;
 
         switch (ireg_data[ir_reg].native_size) {
-        case CODEGEN_REG_BYTE:
+        case REG_BYTE:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_INTEGER)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_BYTE !REG_INTEGER\n");
+                        fatal("codegen_reg_writeback - REG_BYTE !REG_INTEGER\n");
                 if ((uintptr_t)p < 256)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_BYTE %p\n", p);
+                        fatal("codegen_reg_writeback - REG_BYTE %p\n", p);
 #endif
                 codegen_direct_write_8(block, p, reg_set->reg_list[c].reg);
                 break;
 
-        case CODEGEN_REG_WORD:
+        case REG_WORD:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_INTEGER)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_WORD !REG_INTEGER\n");
+                        fatal("codegen_reg_writeback - REG_WORD !REG_INTEGER\n");
                 if ((uintptr_t)p < 256)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_WORD %p\n", p);
+                        fatal("codegen_reg_writeback - REG_WORD %p\n", p);
 #endif
                 codegen_direct_write_16(block, p, reg_set->reg_list[c].reg);
                 break;
 
-        case CODEGEN_REG_DWORD:
+        case REG_DWORD:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_INTEGER)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_DWORD !REG_INTEGER\n");
+                        fatal("codegen_reg_writeback - REG_DWORD !REG_INTEGER\n");
 #endif
                 if ((uintptr_t)p < 256)
                         codegen_direct_write_32_stack(block, (intptr_t)p, reg_set->reg_list[c].reg);
@@ -383,10 +383,10 @@ static void codegen_reg_writeback(host_reg_set_t *reg_set, codeblock_t *block, i
                         codegen_direct_write_32(block, p, reg_set->reg_list[c].reg);
                 break;
 
-        case CODEGEN_REG_QWORD:
+        case REG_QWORD:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_FP)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_QWORD !REG_FP\n");
+                        fatal("codegen_reg_writeback - REG_QWORD !REG_FP\n");
 #endif
                 if ((uintptr_t)p < 256)
                         codegen_direct_write_64_stack(block, (intptr_t)p, reg_set->reg_list[c].reg);
@@ -394,20 +394,20 @@ static void codegen_reg_writeback(host_reg_set_t *reg_set, codeblock_t *block, i
                         codegen_direct_write_64(block, p, reg_set->reg_list[c].reg);
                 break;
 
-        case CODEGEN_REG_POINTER:
+        case REG_POINTER:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_INTEGER)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_POINTER !REG_INTEGER\n");
+                        fatal("codegen_reg_writeback - REG_POINTER !REG_INTEGER\n");
                 if ((uintptr_t)p < 256)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_POINTER %p\n", p);
+                        fatal("codegen_reg_writeback - REG_POINTER %p\n", p);
 #endif
                 codegen_direct_write_ptr(block, p, reg_set->reg_list[c].reg);
                 break;
 
-        case CODEGEN_REG_DOUBLE:
+        case REG_DOUBLE:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_FP)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_DOUBLE !REG_FP\n");
+                        fatal("codegen_reg_writeback - REG_DOUBLE !REG_FP\n");
 #endif
                 if ((uintptr_t)p < 256)
                         codegen_direct_write_double_stack(block, (intptr_t)p, reg_set->reg_list[c].reg);
@@ -415,10 +415,10 @@ static void codegen_reg_writeback(host_reg_set_t *reg_set, codeblock_t *block, i
                         codegen_direct_write_double(block, p, reg_set->reg_list[c].reg);
                 break;
 
-        case CODEGEN_REG_FPU_ST_BYTE:
+        case REG_FPU_ST_BYTE:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_INTEGER)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_FPU_ST_BYTE !REG_INTEGER\n");
+                        fatal("codegen_reg_writeback - REG_FPU_ST_BYTE !REG_INTEGER\n");
 #endif
                 if (block->flags & CODEBLOCK_STATIC_TOP)
                         codegen_direct_write_8(block, &cpu_state.tag[reg_set->regs[c].reg & 7], reg_set->reg_list[c].reg);
@@ -426,10 +426,10 @@ static void codegen_reg_writeback(host_reg_set_t *reg_set, codeblock_t *block, i
                         codegen_direct_write_st_8(block, &cpu_state.tag[0], reg_set->regs[c].reg & 7, reg_set->reg_list[c].reg);
                 break;
 
-        case CODEGEN_REG_FPU_ST_QWORD:
+        case REG_FPU_ST_QWORD:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_FP)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_FPU_ST_QWORD !REG_FP\n");
+                        fatal("codegen_reg_writeback - REG_FPU_ST_QWORD !REG_FP\n");
 #endif
                 if (block->flags & CODEBLOCK_STATIC_TOP)
                         codegen_direct_write_64(block, &cpu_state.MM[reg_set->regs[c].reg & 7], reg_set->reg_list[c].reg);
@@ -437,10 +437,10 @@ static void codegen_reg_writeback(host_reg_set_t *reg_set, codeblock_t *block, i
                         codegen_direct_write_st_64(block, &cpu_state.MM[0], reg_set->regs[c].reg & 7, reg_set->reg_list[c].reg);
                 break;
 
-        case CODEGEN_REG_FPU_ST_DOUBLE:
+        case REG_FPU_ST_DOUBLE:
 #ifndef RELEASE_BUILD
                 if (ireg_data[ir_reg].type != REG_FP)
-                        fatal("codegen_reg_writeback - CODEGEN_REG_FPU_ST_DOUBLE !REG_FP\n");
+                        fatal("codegen_reg_writeback - REG_FPU_ST_DOUBLE !REG_FP\n");
 #endif
                 if (block->flags & CODEBLOCK_STATIC_TOP)
                         codegen_direct_write_double(block, &cpu_state.ST[reg_set->regs[c].reg & 7], reg_set->reg_list[c].reg);
@@ -464,35 +464,35 @@ void codegen_reg_write_imm(codeblock_t *block, ir_reg_t ir_reg, uint32_t imm_dat
         void *p = ireg_data[reg_idx].p;
 
         switch (ireg_data[reg_idx].native_size) {
-        case CODEGEN_REG_BYTE:
+        case REG_BYTE:
 #ifndef RELEASE_BUILD
                 if ((uintptr_t)p < 256)
-                        fatal("codegen_reg_write_imm - CODEGEN_REG_BYTE %p\n", p);
+                        fatal("codegen_reg_write_imm - REG_BYTE %p\n", p);
 #endif
                 codegen_direct_write_8_imm(block, p, imm_data);
                 break;
 
-        case CODEGEN_REG_WORD:
+        case REG_WORD:
 #ifndef RELEASE_BUILD
                 if ((uintptr_t)p < 256)
-                        fatal("codegen_reg_write_imm - CODEGEN_REG_WORD %p\n", p);
+                        fatal("codegen_reg_write_imm - REG_WORD %p\n", p);
 #endif
                 codegen_direct_write_16_imm(block, p, imm_data);
                 break;
 
-        case CODEGEN_REG_DWORD:
+        case REG_DWORD:
                 if ((uintptr_t)p < 256)
                         codegen_direct_write_32_imm_stack(block, (intptr_t)p, imm_data);
                 else
                         codegen_direct_write_32_imm(block, p, imm_data);
                 break;
 
-        case CODEGEN_REG_POINTER:
-        case CODEGEN_REG_QWORD:
-        case CODEGEN_REG_DOUBLE:
-        case CODEGEN_REG_FPU_ST_BYTE:
-        case CODEGEN_REG_FPU_ST_QWORD:
-        case CODEGEN_REG_FPU_ST_DOUBLE:
+        case REG_POINTER:
+        case REG_QWORD:
+        case REG_DOUBLE:
+        case REG_FPU_ST_BYTE:
+        case REG_FPU_ST_QWORD:
+        case REG_FPU_ST_DOUBLE:
         default:
                 fatal("codegen_reg_write_imm - native_size=%i\n", ireg_data[reg_idx].native_size);
         }

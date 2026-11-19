@@ -26,7 +26,7 @@ int pause_emulation();
 int stop_emulation();
 }
 
-extern "C" int config_override;
+extern int config_override;
 
 extern void InitXmlResource();
 

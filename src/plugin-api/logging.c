@@ -4,8 +4,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
-
-#include <pcem/logging.h>
 #include <errno.h>
 
 #include "config.h"
@@ -19,20 +17,16 @@ void (*_dumpregs)();
 FILE *pclogf = NULL;
 
 uint8_t pclog_start() {
-#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
+#ifndef RELEASE_BUILD
         if (!pclogf) {
                 char buf[1024];
-                int path_length = snprintf(buf, sizeof(buf), "%spcem.log", logs_path);
-
-                if (path_length < 0 || (size_t)path_length >= sizeof(buf)) {
-                        fprintf(stderr, "PCem log path is too long: %s\n", logs_path);
-                        return 0;
-                }
-
+                strcpy(buf, logs_path);
+                put_backslash(buf);
+                strcat(buf, "pcem.log");
                 pclogf = fopen(buf, "wt");
 
                 if (NULL == pclogf) {
-                        fprintf(stderr, "Could not open log file for writing '%s': %s\n", buf, strerror(errno));
+                        fprintf(stderr, "Could not open log file for writing: %s", strerror(errno));
                         return 0;
                 }
         }
@@ -43,7 +37,7 @@ uint8_t pclog_start() {
 }
 
 void pclog_flush() {
-#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
+#ifndef RELEASE_BUILD
         if (pclogf) {
                 fflush(pclogf);
         }
@@ -51,7 +45,7 @@ void pclog_flush() {
 }
 
 void pclog_end() {
-#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
+#ifndef RELEASE_BUILD
         if (pclogf) {
                 fflush(pclogf);
                 fclose(pclogf);
@@ -61,7 +55,7 @@ void pclog_end() {
 }
 
 void error(const char *format, ...) {
-#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
+#ifndef RELEASE_BUILD
         char buf[1024];
         // return;
         if (!pclog_start()) {
@@ -79,7 +73,7 @@ void error(const char *format, ...) {
 }
 
 void fatal(const char *format, ...) {
-#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
+#ifndef RELEASE_BUILD
         char buf[1024];
         // return;
         if (!pclog_start()) {
@@ -113,7 +107,7 @@ void warning(const char *format, ...) {
 }
 
 void pclog(const char *format, ...) {
-#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
+#ifndef RELEASE_BUILD
         char buf[1024];
         // return;
         if (!pclog_start()) {

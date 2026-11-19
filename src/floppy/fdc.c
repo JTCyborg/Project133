@@ -73,7 +73,6 @@ typedef struct FDC {
         uint8_t fifobuf[16];
 
         int int_pending;
-        unsigned int debug_read_bytes;
 
         pc_timer_t timer;
 } FDC;
@@ -144,10 +143,8 @@ void fdc_fifo_buf_dummy() {
 }
 
 static void fdc_int() {
-        if (!fdc.pcjr) {
-                pclog("[FDCDBG] IRQ6 assert drive=%d status=%02X bytes=%u\n", fdc.drive, fdc.stat, fdc.debug_read_bytes);
+        if (!fdc.pcjr)
                 picint(1 << 6);
-        }
 }
 
 static void fdc_watchdog_poll(void *p) {
@@ -285,8 +282,6 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
         case 1:
                 return;
         case 2: /*DOR*/
-                pclog("[FDCDBG] DOR-WRITE old=%02X new=%02X drive=%u motorA=%u motorB=%u reset=%u irq_dma=%u\n",
-                      fdc.dor, val, val & 3, (val >> 4) & 1, (val >> 5) & 1, (val >> 2) & 1, (val >> 3) & 1);
                 //                if (val == 0xD && (cs >> 4) == 0xFC81600 && ins > 769619936) output = 3;
                 //                printf("DOR was %02X\n",fdc.dor);
                 if (fdc.pcjr) {
@@ -349,8 +344,7 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                         fdc.data_ready = 0;
 
                         fdc.command = val;
-                        pclog("[FDCDBG] CMD=%02X DOR=%02X drive=%d rate=%d dma=%d\n",
-                              fdc.command, fdc.dor, fdc.drive, fdc.rate, fdc.dma);
+                        //                        pclog("Starting FDC command %02X\n",fdc.command);
                         switch (fdc.command) {
                         case 1: /*Mode*/
                                 if (!fdc.is_nsc)
@@ -499,7 +493,6 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                                 break;
                         }
                 } else {
-                        pclog("[FDCDBG] PARAM cmd=%02X index=%d/%d value=%02X\n", fdc.command, fdc.pnum + 1, fdc.ptot, val);
                         fdc.params[fdc.pnum++] = val;
                         if (fdc.pnum == fdc.ptot) {
                                 uint64_t time;
@@ -574,7 +567,6 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                                 case 0xa6:
                                 case 0xc6:
                                 case 0xe6:
-                                        fdc.debug_read_bytes = 0;
                                         fdc_rate(fdc.drive);
                                         fdc.head = fdc.params[2];
                                         fdc.sector = fdc.params[3];
@@ -585,10 +577,6 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                                                 fdd_seek(fdc.drive, fdc.rw_track - fdc.track[fdc.drive]);
                                                 fdc.track[fdc.drive] = fdc.rw_track;
                                         }
-                                        pclog("[FDCDBG] READ drive=%d DOR=%02X CHRN=%02X/%02X/%02X/%02X EOT=%02X rate=%d bitcell=%d type=%d medium=%d DMA=%d DMA2=%06X:%04X count=%04X\n",
-                                              fdc.drive, fdc.dor, fdc.rw_track, fdc.head, fdc.sector, fdc.sector_size,
-                                              fdc.params[5], fdc.rate, fdc.bitcell_period, fdd_get_type(fdc.drive),
-                                              fdd_can_read_medium(fdc.drive), fdc.dma, dma[2].page, dma[2].ac, dma[2].cc);
 
                                         disc_readsector(fdc.drive, fdc.sector, fdc.rw_track, fdc.head, fdc.rate, fdc.params[4]);
                                         timer_disable(&fdc.timer);
@@ -1065,11 +1053,6 @@ int fdc_data(uint8_t data) {
         if (fdc.tc)
                 return 0;
 
-        fdc.debug_read_bytes++;
-        if (fdc.debug_read_bytes == 1 || !(fdc.debug_read_bytes & 0x1ff))
-                pclog("[FDCDBG] DATA bytes=%u value=%02X DMA=%d DMA2=%06X:%04X count=%04X TC=%d\n",
-                      fdc.debug_read_bytes, data, fdc.dma, dma[2].page, dma[2].ac, dma[2].cc, fdc.tc);
-
         if (fdc.pcjr || !fdc.dma) {
                 if (fdc.data_ready) {
                         fdc_overrun();
@@ -1091,11 +1074,8 @@ int fdc_data(uint8_t data) {
                         }
                 }
         } else {
-                if (dma_channel_write(2, data) & DMA_OVER) {
-                        pclog("[FDCDBG] DMA2 terminal-count at byte=%u address=%06X:%04X\n",
-                              fdc.debug_read_bytes, dma[2].page, dma[2].ac);
+                if (dma_channel_write(2, data) & DMA_OVER)
                         fdc.tc = 1;
-                }
 
                 if (!fdc.fifo) {
                         fdc.data_ready = 1;
@@ -1115,19 +1095,12 @@ int fdc_data(uint8_t data) {
 
 void fdc_finishread() {
         fdc.inread = 0;
-        pclog("[FDCDBG] SECTOR-DONE bytes=%u drive=%d CHS=%d/%d/%d DMA=%d DMA2=%06X:%04X base=%06X:%04X count=%04X mode=%02X TC=%d RAM7C00=%02X %02X %02X %02X %02X %02X %02X %02X\n",
-              fdc.debug_read_bytes, fdc.drive, fdc.rw_track, fdc.head, fdc.sector, fdc.dma,
-              dma[2].page, dma[2].ac, dma[2].page, dma[2].ab, dma[2].cb, dma[2].mode, fdc.tc,
-              readmembl(0x7c00), readmembl(0x7c01), readmembl(0x7c02), readmembl(0x7c03),
-              readmembl(0x7c04), readmembl(0x7c05), readmembl(0x7c06), readmembl(0x7c07));
         timer_set_delay_u64(&fdc.timer, 200 * TIMER_USEC);
         //        rpclog("fdc_finishread\n");
 }
 
 void fdc_notfound(int reason) {
-        pclog("[FDCDBG] NOT-FOUND reason=%d drive=%d CHS=%d/%d/%d N=%d rate=%d bitcell=%d type=%d medium=%d\n",
-              reason, fdc.drive, fdc.rw_track, fdc.head, fdc.sector, fdc.sector_size,
-              fdc.rate, fdc.bitcell_period, fdd_get_type(fdc.drive), fdd_can_read_medium(fdc.drive));
+        //        pclog("fdc_notfound: reason=%i\n", reason);
         timer_disable(&fdc.timer);
 
         fdc_int();

@@ -297,11 +297,7 @@ static inline void exec_interpreter(void) {
  *       a SEGFAULT
  */
 
-#if defined(_MSC_VER)
-__declspec(noinline) static void exec_recompiler(void) {
-#else
 static void __attribute__((noinline)) exec_recompiler(void) {
-#endif
         uint32_t phys_addr = get_phys(cs + cpu_state.pc);
         int hash = HASH(phys_addr);
         codeblock_t *block = &codeblock[codeblock_hash[hash]];

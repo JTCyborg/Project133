@@ -80,30 +80,12 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/plugin-api/plugin-api.cmake)
 
 set(PCEM_LIBRARIES ${PCEM_LIBRARIES} PARENT_SCOPE)
 add_executable(pcem ${PCEM_SRC} ${PCEM_PRIVATE_API} ${PCEM_EMBEDDED_PLUGIN_API})
-if(MSVC)
-        # wxWidgets viewer sources use C++20 designated aggregate initializers.
-        set_property(TARGET pcem PROPERTY CXX_STANDARD 20)
-        set_property(TARGET pcem PROPERTY CXX_STANDARD_REQUIRED ON)
-endif()
 target_compile_definitions(pcem PUBLIC ${PCEM_DEFINES})
-if(MSVC)
-        # /Gy and /Gw are not enabled yet; first establish a clean MSVC build.
-        target_link_options(pcem PRIVATE "/SUBSYSTEM:WINDOWS")
-else()
-        target_compile_options(pcem PUBLIC
-                $<$<COMPILE_LANGUAGE:CXX>:-fno-common>
-                $<$<COMPILE_LANGUAGE:C>:-fno-common>)
-        if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-                target_link_options(pcem PRIVATE "-Wl,--subsystem,windows")
-        endif()
+target_compile_options(pcem PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-fno-common> $<$<COMPILE_LANGUAGE:C>:-fno-common>)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        target_link_options(pcem PRIVATE "-Wl,--subsystem,windows")
 endif()
 target_link_libraries(pcem PRIVATE ${PCEM_LIBRARIES})
-if(PLUGIN_ENGINE)
-        # Link the plugin API by target so CMake builds its DLL/import library
-        # before linking the emulator.
-        target_link_libraries(pcem PRIVATE pcem-plugin-api)
-        add_dependencies(pcem pcem-plugin-api)
-endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         set_target_properties(pcem PROPERTIES

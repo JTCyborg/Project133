@@ -1,3 +1,6 @@
+#ifdef _WIN32
+#define _WIN32_WINNT 0x0501
+#endif
 #include <SDL2/SDL.h>
 #include "video.h"
 #include "sdl2-video.h"
@@ -334,7 +337,7 @@ static void input_capture(int on) {
         plat_input_capture(on);
 }
 
-void releasemouse(void) { input_capture(0); }
+void releasemouse() { input_capture(0); }
 
 #ifdef __APPLE__
 #define RELEASE_KEY_NAME "CTRL-CMD"
@@ -392,8 +395,8 @@ void get_registry_key_map() {
 
         bufSize = 32768;
         pclog("Preparing scan code map list...\n");
-        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, keyName, 0, 1, &hKey) == ERROR_SUCCESS) {
-                if (RegQueryValueExA(hKey, valueName, NULL, NULL, (LPBYTE)buf, &bufSize) == ERROR_SUCCESS) {
+        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, keyName, 0, 1, &hKey) == ERROR_SUCCESS) {
+                if (RegQueryValueEx(hKey, valueName, NULL, NULL, (LPBYTE)buf, &bufSize) == ERROR_SUCCESS) {
                         UINT32 *bufEx2 = (UINT32 *)buf;
                         int scMapCount = bufEx2[2];
                         pclog("%lu scan code mappings found!\n", scMapCount);
@@ -473,13 +476,6 @@ static void process_raw_input(LPARAM lParam) {
 
 LRESULT CALLBACK MsgWindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
         switch (message) {
-        case WM_NCCREATE:
-                pclog("MsgWindowProcedure: WM_NCCREATE hwnd=%p\\n", (void *)hwnd);
-                /* A window must explicitly accept non-client creation. */
-                return TRUE;
-        case WM_CREATE:
-                pclog("MsgWindowProcedure: WM_CREATE hwnd=%p\\n", (void *)hwnd);
-                return 0;
         case WM_INPUT:
                 if (infocus)
                         process_raw_input(lParam);
@@ -488,7 +484,7 @@ LRESULT CALLBACK MsgWindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPAR
                 RECT r;
                 HWND parent = (HWND)native_canvas;
                 GetClientRect(parent, &r);
-                HWND child = CreateWindowExA(WS_EX_NOPARENTNOTIFY, szSubClassName, "", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0,
+                HWND child = CreateWindowEx(WS_EX_NOPARENTNOTIFY, szSubClassName, "", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0,
                                             0, r.right - r.left, r.bottom - r.top, parent, NULL, hinstance, NULL);
                 sub_hwnd = child;
                 return (LRESULT)child;
@@ -526,42 +522,30 @@ LRESULT CALLBACK subWindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPAR
 }
 
 static int windows_setup() {
-        WNDCLASSEXA wincl;
+        WNDCLASSEX wincl;
 
         if (msg_hwnd)
                 return 1;
 
         hinstance = (HINSTANCE)GetModuleHandle(NULL);
         memset(&wincl, 0, sizeof(wincl));
-        wincl.cbSize = sizeof(WNDCLASSEXA);
+        wincl.cbSize = sizeof(WNDCLASSEX);
         wincl.hInstance = hinstance;
         wincl.lpszClassName = szMsgClassName;
         wincl.lpfnWndProc = MsgWindowProcedure;
-        if (!RegisterClassExA(&wincl)) {
-                DWORD error = GetLastError();
-                pclog("windows_setup: RegisterClassExA failed for %s (error %lu)\\n", szMsgClassName, (unsigned long)error);
+        if (!RegisterClassEx(&wincl))
                 return 0;
-        }
 
         wincl.lpszClassName = szSubClassName;
         wincl.lpfnWndProc = subWindowProcedure;
         wincl.style = CS_OWNDC;
         wincl.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-        if (!RegisterClassExA(&wincl)) {
-                DWORD error = GetLastError();
-                pclog("windows_setup: RegisterClassExA failed for %s (error %lu)\\n", szSubClassName, (unsigned long)error);
+        if (!RegisterClassEx(&wincl))
                 return 0;
-        }
 
-        SetLastError(ERROR_SUCCESS);
-        msg_hwnd = CreateWindowExA(0, szMsgClassName, "", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, hinstance, NULL);
-        if (!msg_hwnd) {
-                DWORD error = GetLastError();
-                pclog("windows_setup: CreateWindowExA failed class=%s hinstance=%p parent=HWND_MESSAGE error=%lu\\n",
-                      szMsgClassName, (void *)hinstance, (unsigned long)error);
+        msg_hwnd = CreateWindowEx(0, szMsgClassName, "", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, hinstance, NULL);
+        if (!msg_hwnd)
                 return 0;
-        }
-        pclog("windows_setup: message-only window created hwnd=%p\\n", (void *)msg_hwnd);
 
         get_registry_key_map();
 

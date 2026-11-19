@@ -38,16 +38,10 @@ void midi_close() {
 
 int midi_get_num_devs() { return midiOutGetNumDevs(); }
 void midi_get_dev_name(int num, char *s) {
-        MIDIOUTCAPSW caps;
+        MIDIOUTCAPS caps;
 
-        if (midiOutGetDevCapsW((UINT_PTR)num, &caps, sizeof(caps)) != MMSYSERR_NOERROR) {
-                s[0] = '\0';
-                return;
-        }
-
-        /* Convert the Windows wide-character device name to the application's
-         * existing narrow-character MIDI name buffer. */
-        WideCharToMultiByte(CP_ACP, 0, caps.szPname, -1, s, MAXPNAMELEN, NULL, NULL);
+        midiOutGetDevCaps(num, &caps, sizeof(caps));
+        strcpy(s, caps.szPname);
 }
 
 static int midi_pos, midi_len;
