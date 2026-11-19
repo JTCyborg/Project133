@@ -19,6 +19,10 @@ endif()
 
 project(PCem)
 
+# wxWidgets viewer sources use C++20 designated initializers.
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_XCODE_ATTRIBUTE_GCC_WARN_64_TO_32_BIT_CONVERSION NO)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
