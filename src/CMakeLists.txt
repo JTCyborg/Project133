@@ -74,7 +74,7 @@ set(PCEM_SRC ${PCEM_SRC}
         timer.c
         )
 
-set(PCEM_LIBRARIES ${DISPLAY_ENGINE_LIBRARIES} ${SDL2_LIBRARIES} ${OPENAL_LIBRARY} ${OPENGL_LIBRARIES} ${PCEM_ADDITIONAL_LIBS})
+set(PCEM_LIBRARIES ${DISPLAY_ENGINE_LIBRARIES} ${PCEM_SDL2_LIBRARIES} ${OPENAL_LIBRARY} ${OPENGL_LIBRARIES} ${PCEM_ADDITIONAL_LIBS})
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/plugin-api/plugin-api.cmake)
 
@@ -84,8 +84,12 @@ target_compile_definitions(pcem PUBLIC ${PCEM_DEFINES})
 if(NOT MSVC)
         target_compile_options(pcem PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-fno-common> $<$<COMPILE_LANGUAGE:C>:-fno-common>)
 endif()
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-        target_link_options(pcem PRIVATE "-Wl,--subsystem,windows")
+if(WIN32)
+        if(MSVC)
+                target_link_options(pcem PRIVATE "/SUBSYSTEM:WINDOWS")
+        else()
+                target_link_options(pcem PRIVATE "-Wl,--subsystem,windows")
+        endif()
 endif()
 target_link_libraries(pcem PRIVATE ${PCEM_LIBRARIES})
 
