@@ -26,6 +26,14 @@ uint8_t pclog_start() {
                 strcat(buf, "pcem.log");
                 pclogf = fopen(buf, "wt");
 
+                // If the configured logs directory is missing or unavailable,
+                // keep diagnostics usable by falling back beside the executable.
+                if (NULL == pclogf) {
+                        strcpy(buf, pcem_path);
+                        strcat(buf, "pcem.log");
+                        pclogf = fopen(buf, "wt");
+                }
+
                 if (NULL == pclogf) {
                         fprintf(stderr, "Could not open log file for writing: %s", strerror(errno));
                         return 0;
