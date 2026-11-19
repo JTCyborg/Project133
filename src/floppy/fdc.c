@@ -708,6 +708,9 @@ uint8_t fdc_read(uint16_t addr, void *priv) {
                 break;
         case 4: /*Status*/
                 temp = fdc.stat;
+                if (paramstogo || fdc_reset_stat || discint == -1)
+                        pclog("[FDC-TRACE] MSR read=%02X reset_status=%d pending=%d discint=%d pos=%d\\n",
+                              temp, fdc_reset_stat, fdc.int_pending, discint, fdc.pos);
                 break;
         case 5: /*Data*/
                 fdc.stat &= ~0x80;
@@ -720,8 +723,11 @@ uint8_t fdc_read(uint16_t addr, void *priv) {
                         break;
                 }
                 if (paramstogo) {
+                        int response_index = 10 - paramstogo;
                         paramstogo--;
                         temp = fdc.res[10 - paramstogo];
+                        pclog("[FDC-TRACE] DATA response[%d]=%02X remaining=%d stat=%02X reset_status=%d pending=%d\\n",
+                              response_index, temp, paramstogo, fdc.stat, fdc_reset_stat, fdc.int_pending);
                         //                        pclog("Read param %i %02X\n",10-paramstogo,temp);
                         if (!paramstogo) {
                                 fdc.stat = 0x80;
@@ -911,6 +917,8 @@ void fdc_callback() {
         case 8: /*Sense interrupt status*/
                 //                pclog("Sense interrupt status %i\n", fdc_reset_stat);
 
+                pclog("[FDC-TRACE] SENSE callback reset_status=%d pending=%d st0=%02X drive=%u track=%u head=%u stat_before=%02X\\n",
+                      fdc_reset_stat, fdc.int_pending, fdc.st0, fdc.drive, fdc.track[fdc.drive], fdc.head, fdc.stat);
                 fdc.stat = (fdc.stat & 0xf) | 0xd0;
                 if (fdc_reset_stat)
                         fdc.res[9] = 0xc0 | (4 - fdc_reset_stat) | (fdc.head ? 4 : 0);
