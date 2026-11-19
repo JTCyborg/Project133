@@ -1,5 +1,6 @@
 #include "wx-app.h"
 #include "wx-frontend.h"
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
 #if WIN32
