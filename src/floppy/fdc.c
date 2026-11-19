@@ -415,8 +415,20 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                                         fdc_callback();
                                 } else {
                                         fdc.stat = 0x10;
-                                        discint = 0xfc;
-                                        timer_set_delay_u64(&fdc.timer, 100 * TIMER_USEC);
+                                        /*
+                                         * A DOR reset schedules discint == -1 for 8 us.  The
+                                         * BIOS may issue SENSE INTERRUPT STATUS immediately
+                                         * after releasing reset, before that timer expires.
+                                         * Do not replace the pending reset completion with the
+                                         * ordinary no-interrupt delay: doing so loses IRQ6 and
+                                         * the four reset-status results.
+                                         */
+                                        if (discint == -1) {
+                                                pclog("[FDC-TRACE] SENSE pending reset; preserve reset timer\n");
+                                        } else {
+                                                discint = 0xfc;
+                                                timer_set_delay_u64(&fdc.timer, 100 * TIMER_USEC);
+                                        }
                                 }
                                 break;
                         case 0x0a:
@@ -767,6 +779,7 @@ void fdc_callback() {
                 return;
         case -1: /*Reset*/
                  // rpclog("Reset\n");
+                pclog("[FDC-TRACE] RESET complete; raising IRQ6, reset_status=4\n");
                 fdc_int();
                 fdc_reset_stat = 4;
                 return;
