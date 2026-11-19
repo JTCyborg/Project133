@@ -33,7 +33,7 @@ set(PCEM_SRC_PLUGINAPI
 
 if(PLUGIN_ENGINE)
         add_library(pcem-plugin-api SHARED ${PCEM_SRC_PLUGINAPI} ${PCEM_PUBLIC_API})
-        target_link_libraries(pcem-plugin-api PRIVATE ${SDL2_LIBRARIES})
+        target_link_libraries(pcem-plugin-api PRIVATE ${PCEM_SDL2_LIBRARIES})
         target_compile_definitions(pcem-plugin-api PUBLIC ${PCEM_DEFINES})
         install(TARGETS pcem-plugin-api RUNTIME DESTINATION ${PCEM_BIN_DIR} LIBRARY DESTINATION ${PCEM_LIB_DIR} ARCHIVE DESTINATION ${PCEM_LIB_DIR})
         set(PCEM_LIBRARIES ${PCEM_LIBRARIES} pcem-plugin-api)
