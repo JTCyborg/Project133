@@ -295,6 +295,8 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                         }
                         if ((val & 0x80) && !(fdc.dor & 0x80)) {
                                 timer_set_delay_u64(&fdc.timer, 8 * TIMER_USEC);
+                                fdc_reset_stat = 0;
+                                fdc.int_pending = 0;
                                 discint = -1;
                                 fdc_reset();
                         }
@@ -303,6 +305,8 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                 } else {
                         if ((val & 4) && !(fdc.dor & 4)) {
                                 timer_set_delay_u64(&fdc.timer, 8 * TIMER_USEC);
+                                fdc_reset_stat = 0;
+                                fdc.int_pending = 0;
                                 discint = -1;
                                 fdc_reset();
                         }
@@ -322,6 +326,8 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
         case 4:
                 if (val & 0x80) {
                         timer_set_delay_u64(&fdc.timer, 8 * TIMER_USEC);
+                        fdc_reset_stat = 0;
+                        fdc.int_pending = 0;
                         discint = -1;
                         fdc_reset();
                 }
