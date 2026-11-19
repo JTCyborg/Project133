@@ -25,7 +25,7 @@ int confirm();
 #define IDC_CONFIG_BASE 1000
 #define ID_APPLY 500
 #define ID_RESET 501
-extern int renderer_doreset;
+extern "C" int renderer_doreset;
 
 static int shaderconfig_dlgproc(void *hdlg, int message, INT_PARAM wParam, LONG_PARAM lParam) {
         int i;
