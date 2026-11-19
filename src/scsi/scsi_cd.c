@@ -1285,7 +1285,7 @@ static int scsi_cd_command(uint8_t *cdb, void *p) {
                                 uint8_t control;
                         } * gesn_cdb;
 
-                        struct __attribute__((__packed__)) {
+                        struct {
                                 uint16_t len;
                                 uint8_t notification_class;
                                 uint8_t supported_events;
