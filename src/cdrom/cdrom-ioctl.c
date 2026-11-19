@@ -6,8 +6,8 @@
 #include "ntddcdrm.h"
 #include "ntddscsi.h"
 #else
-#include "ddk/ntddcdrm.h"
-#include "ddk/ntddscsi.h"
+#include <ntddcdrm.h>
+#include <ntddscsi.h>
 #endif
 #include "ibm.h"
 #include "ide.h"
