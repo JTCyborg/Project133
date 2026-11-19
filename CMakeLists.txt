@@ -215,6 +215,16 @@ set(OpenGL_GL_PREFERENCE GLVND)
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
+# wxWidgets owns WinMain; SDL2main would add a conflicting WinMain/SDL_main shim.
+set(PCEM_SDL2_LIBRARIES ${SDL2_LIBRARIES})
+if(WIN32 AND PCEM_DISPLAY_ENGINE STREQUAL "wxWidgets")
+    if(TARGET SDL2::SDL2)
+        set(PCEM_SDL2_LIBRARIES SDL2::SDL2)
+    else()
+        list(FILTER PCEM_SDL2_LIBRARIES EXCLUDE REGEX "SDL2main")
+    endif()
+endif()
+
 include(${CMAKE_SOURCE_DIR}/cmake/apple.cmake)
 
 find_package(OpenAL REQUIRED)
