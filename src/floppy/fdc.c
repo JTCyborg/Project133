@@ -283,7 +283,7 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
         case 1:
                 return;
         case 2: /*DOR*/
-                pclog("[FDC-TRACE] DOR write=%02X old=%02X drive=%u motors=%X reset=%u dma=%u CS=%04X\n", val, fdc.dor, val & 3, (val >> 4) & 0x0f, (val & 4) != 0, fdc.dma, cs >> 4);
+                pclog("[FDC-TRACE] DOR write=%02X old=%02X drive=%u motors=%X reset=%u dma=%u at=%04X:%04X pc=%08X oldpc=%08X\n", val, fdc.dor, val & 3, (val >> 4) & 0x0f, (val & 4) != 0, fdc.dma, CS, (uint16_t)cpu_state.oldpc, cpu_state.pc, cpu_state.oldpc);
                 //                if (val == 0xD && (cs >> 4) == 0xFC81600 && ins > 769619936) output = 3;
                 //                printf("DOR was %02X\n",fdc.dor);
                 if (fdc.pcjr) {
