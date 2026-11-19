@@ -18,7 +18,7 @@ void (*_dumpregs)();
 FILE *pclogf = NULL;
 
 uint8_t pclog_start() {
-#ifndef RELEASE_BUILD
+#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
         if (!pclogf) {
                 char buf[1024];
                 strcpy(buf, logs_path);
@@ -38,7 +38,7 @@ uint8_t pclog_start() {
 }
 
 void pclog_flush() {
-#ifndef RELEASE_BUILD
+#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
         if (pclogf) {
                 fflush(pclogf);
         }
@@ -46,7 +46,7 @@ void pclog_flush() {
 }
 
 void pclog_end() {
-#ifndef RELEASE_BUILD
+#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
         if (pclogf) {
                 fflush(pclogf);
                 fclose(pclogf);
@@ -56,7 +56,7 @@ void pclog_end() {
 }
 
 void error(const char *format, ...) {
-#ifndef RELEASE_BUILD
+#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
         char buf[1024];
         // return;
         if (!pclog_start()) {
@@ -74,7 +74,7 @@ void error(const char *format, ...) {
 }
 
 void fatal(const char *format, ...) {
-#ifndef RELEASE_BUILD
+#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
         char buf[1024];
         // return;
         if (!pclog_start()) {
@@ -108,7 +108,7 @@ void warning(const char *format, ...) {
 }
 
 void pclog(const char *format, ...) {
-#ifndef RELEASE_BUILD
+#if !defined(RELEASE_BUILD) || defined(PCEM_ENABLE_LOGGING)
         char buf[1024];
         // return;
         if (!pclog_start()) {
