@@ -117,7 +117,7 @@ void pic_write(uint16_t addr, uint8_t val, void *priv) {
                         if ((val & 0xE0) == 0x60) {
                                 //                                pclog("Specific EOI - %02X %i\n",pic.ins,1<<(val&7));
                                 if (val == 0x66)
-                                        pclog("[PIC-TRACE] EOI IRQ6 specific CS:IP=%04X:%08X pend=%02X ins=%02X mask=%02X\\n", CS, pc, pic.pend, pic.ins, pic.mask);
+                                        pclog("[PIC-TRACE] EOI IRQ6 specific pend=%02X ins=%02X mask=%02X\n", pic.pend, pic.ins, pic.mask);
                                 pic.ins &= ~(1 << (val & 7));
                                 pic_update_mask(&pic.mask2, pic.ins);
                                 if (val == 2 && (pic2.pend & ~pic2.mask) & ~pic2.mask2)
@@ -129,7 +129,7 @@ void pic_write(uint16_t addr, uint8_t val, void *priv) {
                                 for (c = 0; c < 8; c++) {
                                         if (pic.ins & (1 << c)) {
                                                 if (c == 6)
-                                                        pclog("[PIC-TRACE] EOI IRQ6 nonspecific CS:IP=%04X:%08X pend=%02X ins=%02X mask=%02X\\n", CS, pc, pic.pend, pic.ins, pic.mask);
+                                                        pclog("[PIC-TRACE] EOI IRQ6 nonspecific pend=%02X ins=%02X mask=%02X\n", pic.pend, pic.ins, pic.mask);
                                                 pic.ins &= ~(1 << c);
                                                 pic_update_mask(&pic.mask2, pic.ins);
 
@@ -313,8 +313,8 @@ void picint(uint16_t num) {
         //        pclog("picint : PEND now %02X %02X\n", pic.pend, pic2.pend);
         pic_updatepending();
         if (num & (1 << 6))
-                pclog("[PIC-TRACE] IRQ6 ASSERT CS:IP=%04X:%08X AT=%d pend=%02X ins=%02X mask=%02X mask2=%02X intpending=%X\\n",
-                      CS, pc, AT, pic.pend, pic.ins, pic.mask, pic.mask2, pic_intpending);
+                pclog("[PIC-TRACE] IRQ6 ASSERT AT=%d pend=%02X ins=%02X mask=%02X mask2=%02X intpending=%X\n",
+                      AT, pic.pend, pic.ins, pic.mask, pic.mask2, pic_intpending);
 }
 
 void picintlevel(uint16_t num) {
@@ -395,8 +395,8 @@ uint8_t picinterrupt() {
                         if (pic.icw4 & 0x02)
                                 pic_autoeoi();
                         if (c == 6)
-                                pclog("[PIC-TRACE] IRQ6 VECTOR=%02X CS:IP=%04X:%08X pend=%02X ins=%02X mask=%02X\\n",
-                                      c + pic.vector, CS, pc, pic.pend, pic.ins, pic.mask);
+                                pclog("[PIC-TRACE] IRQ6 VECTOR=%02X pend=%02X ins=%02X mask=%02X\n",
+                                      c + pic.vector, pic.pend, pic.ins, pic.mask);
                         return c + pic.vector;
                 }
         }
