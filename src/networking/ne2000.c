@@ -31,6 +31,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#ifdef _MSC_VER
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
 
 #include <slirp/libslirp.h>
 #include "queue.h"
