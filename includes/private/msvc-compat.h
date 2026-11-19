@@ -5,6 +5,18 @@
  * Keep this header safe to force-include before every project translation unit.
  */
 #ifdef _MSC_VER
+/* Request the standard math constants before any translation unit includes
+ * <math.h> or <cmath>. MSVC keeps these behind _USE_MATH_DEFINES. */
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+
+/* MSVC's CRT declares off_t in sys/types.h; several POSIX-derived sources
+ * use it directly for file offsets. */
+#include <sys/types.h>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 /* Avoid Windows min/max macros breaking qualified C++ standard-library calls. */
 #ifndef NOMINMAX
 #define NOMINMAX
