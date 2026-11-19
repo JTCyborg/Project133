@@ -795,6 +795,12 @@ void fdc_callback() {
                 fdc_int();
                 fdc_reset_stat = 4;
                 return;
+        case 3: /*Specify*/
+                /* SPECIFY has no result phase. Return the controller to RQM=1,
+                   DIO=0, CB=0 after the command's internal delay. */
+                fdc.stat = 0x80;
+                pclog("[FDC-TRACE] SPECIFY complete; MSR=80\n");
+                return;
         case 1: /*Mode*/
                 fdc.stat = 0x80;
                 fdc.densel_force = (fdc.params[2] & 0xC0) >> 6;
