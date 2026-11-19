@@ -70,6 +70,7 @@ static int get_bitcell_period() {
 }
 
 void disc_sector_readsector(int drive, int sector, int track, int side, int rate, int sector_size) {
+        pclog("[FDC-TRACE] MEDIA read request drive=%d C/H/R/N=%d/%d/%d/%d rate=%d\n", drive, track, side, sector, sector_size, rate);
         //        pclog("disc_sector_readsector: fdc_period=%i img_period=%i rate=%i sector=%i track=%i side=%i\n",
         //        fdc_get_bitcell_period(), get_bitcell_period(), rate, sector, track, side);
 
@@ -165,6 +166,7 @@ void disc_sector_poll() {
                    period=%i,%i\n", cur_sector, cur_byte, disc_sector_sector, s->r, disc_sector_side, s->h, disc_sector_track,
                    s->c, fdc_get_bitcell_period(), get_bitcell_period());*/
                 if (index_count > 1) {
+                        pclog("[FDC-TRACE] MEDIA sector search failed drive=%d requested C/H/R/N=%d/%d/%d/%d status=%02X\n", disc_sector_drive, disc_sector_track, disc_sector_side, disc_sector_sector, disc_sector_n, disc_sector_status);
                         //                        pclog("Find sector not found\n");
                         fdc_notfound(disc_sector_status);
                         disc_sector_state = STATE_IDLE;
@@ -192,6 +194,7 @@ void disc_sector_poll() {
                         break;
                 }
                 disc_sector_state = STATE_READ_SECTOR;
+                pclog("[FDC-TRACE] MEDIA sector matched drive=%d C/H/R/N=%d/%d/%d/%d\n", disc_sector_drive, s->c, s->h, s->r, s->n);
         case STATE_READ_SECTOR:
                 //                pclog("STATE_READ_SECTOR: cur_byte=%i %i\n", cur_byte, disc_intersector_delay);
                 if (fdc_data(s->data[cur_byte])) {

@@ -83,6 +83,7 @@ void fdc_callback();
 //#define SECTORS 9
 int lastbyte = 0;
 uint8_t disc_3f7;
+static unsigned int fdc_dma_bytes;
 
 int discmodified[2];
 int discrate[2];
@@ -282,6 +283,7 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
         case 1:
                 return;
         case 2: /*DOR*/
+                pclog("[FDC-TRACE] DOR write=%02X old=%02X drive=%u motor=%u reset=%u dma=%u\n", val, fdc.dor, val & 3, (val & 0xf0) != 0, (val & 4) != 0, fdc.dma);
                 //                if (val == 0xD && (cs >> 4) == 0xFC81600 && ins > 769619936) output = 3;
                 //                printf("DOR was %02X\n",fdc.dor);
                 if (fdc.pcjr) {
@@ -344,6 +346,7 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                         fdc.data_ready = 0;
 
                         fdc.command = val;
+                        pclog("[FDC-TRACE] CMD=%02X drive=%u DOR=%02X stat=%02X\n", val, fdc.drive, fdc.dor, fdc.stat);
                         //                        pclog("Starting FDC command %02X\n",fdc.command);
                         switch (fdc.command) {
                         case 1: /*Mode*/
@@ -494,6 +497,7 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                         }
                 } else {
                         fdc.params[fdc.pnum++] = val;
+                        pclog("[FDC-TRACE] PARAM cmd=%02X index=%u/%u value=%02X\n", fdc.command, fdc.pnum, fdc.ptot, val);
                         if (fdc.pnum == fdc.ptot) {
                                 uint64_t time;
 
@@ -573,6 +577,8 @@ void fdc_write(uint16_t addr, uint8_t val, void *priv) {
                                         fdc.sector_size = fdc.params[4];
                                         fdc.eot[fdc.drive] = fdc.params[5];
                                         fdc.rw_track = fdc.params[1];
+                                        fdc_dma_bytes = 0;
+                                        pclog("[FDC-TRACE] READ drive=%u C/H/R/N=%u/%u/%u/%u EOT=%u rate=%u DMA=%u\n", fdc.drive, fdc.rw_track, fdc.head, fdc.sector, fdc.params[4], fdc.params[5], fdc.rate, fdc.dma);
                                         if (fdc.config & 0x40) {
                                                 fdd_seek(fdc.drive, fdc.rw_track - fdc.track[fdc.drive]);
                                                 fdc.track[fdc.drive] = fdc.rw_track;
@@ -1074,8 +1080,14 @@ int fdc_data(uint8_t data) {
                         }
                 }
         } else {
-                if (dma_channel_write(2, data) & DMA_OVER)
+                int dma_result = dma_channel_write(2, data);
+                fdc_dma_bytes++;
+                if (fdc_dma_bytes == 1 || (fdc_dma_bytes % 512) == 0 || (dma_result & DMA_OVER))
+                        pclog("[FDC-TRACE] DMA2 byte=%u value=%02X result=%d\n", fdc_dma_bytes, data, dma_result);
+                if (dma_result & DMA_OVER) {
                         fdc.tc = 1;
+                        pclog("[FDC-TRACE] DMA2 terminal-count bytes=%u\n", fdc_dma_bytes);
+                }
 
                 if (!fdc.fifo) {
                         fdc.data_ready = 1;
@@ -1094,6 +1106,7 @@ int fdc_data(uint8_t data) {
 }
 
 void fdc_finishread() {
+        pclog("[FDC-TRACE] READ finish drive=%u C/H/R=%u/%u/%u dma_bytes=%u tc=%u\n", fdc.drive, fdc.rw_track, fdc.head, fdc.sector, fdc_dma_bytes, fdc.tc);
         fdc.inread = 0;
         timer_set_delay_u64(&fdc.timer, 200 * TIMER_USEC);
         //        rpclog("fdc_finishread\n");
