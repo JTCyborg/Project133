@@ -9,6 +9,7 @@
 #include "config.h"
 #include "paths.h"
 #include "plugin.h"
+#include <pcem/logging.h>
 
 void (*_savenvr)();
 void (*_dumppic)();
